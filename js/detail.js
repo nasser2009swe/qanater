@@ -1,0 +1,127 @@
+const STORAGE_KEY = 'qanater_listings';
+
+async function loadListings() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    try { return JSON.parse(stored); } catch(e) {}
+  }
+  try {
+    const res = await fetch('../data/listings.json?t=' + Date.now());
+    return await res.json();
+  } catch(e) { return { doctors: [], places: [] }; }
+}
+
+function getParam(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+async function initDetail() {
+  const type = getParam('type');
+  const id = getParam('id');
+  const data = await loadListings();
+
+  let item = null;
+  if (type === 'doctor') {
+    item = (data.doctors || []).find(d => d.id === id);
+    if (item) renderDoctor(item);
+  } else {
+    item = (data.places || []).find(p => p.id === id);
+    if (item) renderPlace(item);
+  }
+
+  if (!item) {
+    document.getElementById('detailName').textContent = 'غير موجود';
+  }
+}
+
+function starBar(rating, reviews) {
+  const full = Math.floor(rating || 0);
+  return `
+    <span class="stars">${'★'.repeat(full)}${'☆'.repeat(5 - full)}</span>
+    <span class="rating-num">${rating} ${reviews ? '(' + reviews + ' تقييم)' : ''}</span>
+  `;
+}
+
+function buildInfoCard(icon, label, value) {
+  const card = document.createElement('div');
+  card.className = 'info-card fade-in';
+  card.innerHTML = `
+    <div class="info-icon">${icon}</div>
+    <div class="info-body">
+      <div class="info-label">${label}</div>
+      <div class="info-value">${value}</div>
+    </div>
+  `;
+  return card;
+}
+
+function renderDoctor(doc) {
+  document.title = `القناطر الخيرية - ${doc.name}`;
+  document.getElementById('detailName').textContent = doc.name;
+  document.getElementById('profileName').textContent = doc.name;
+  document.getElementById('profileSpecialty').textContent = doc.about || '';
+
+  const imgEl = document.getElementById('profileImg');
+  imgEl.innerHTML = doc.image
+    ? `<img src="${doc.image}" alt="${doc.name}"/>`
+    : '👨‍⚕️';
+
+  if (doc.rating) {
+    document.getElementById('ratingRow').innerHTML = starBar(doc.rating, doc.reviews);
+  }
+
+  const infoCards = document.getElementById('infoCards');
+  const infos = [
+    { icon: '📍', label: 'العنوان', value: doc.address },
+    { icon: '🕐', label: 'مواعيد الكشف', value: doc.schedule },
+    { icon: '💰', label: 'رسوم الكشف', value: doc.fees },
+    { icon: '📞', label: 'رقم التواصل', value: doc.phone },
+  ].filter(i => i.value);
+
+  infos.forEach(info => infoCards.appendChild(buildInfoCard(info.icon, info.label, info.value)));
+
+  const actions = document.getElementById('actionButtons');
+  if (doc.phone) {
+    actions.innerHTML += `<a href="tel:${doc.phone}" class="action-btn btn-call">📞 اتصل بالعيادة</a>`;
+    actions.innerHTML += `<a href="https://wa.me/2${doc.phone.replace(/^0/, '')}" target="_blank" class="action-btn btn-whatsapp">💬 تواصل عبر واتساب</a>`;
+  }
+  if (doc.location) {
+    actions.innerHTML += `<a href="${doc.location}" target="_blank" class="action-btn btn-location">📍 الموقع على الخريطة</a>`;
+  }
+}
+
+function renderPlace(place) {
+  document.title = `القناطر الخيرية - ${place.name}`;
+  document.getElementById('detailName').textContent = place.name;
+  document.getElementById('profileName').textContent = place.name;
+  document.getElementById('profileSpecialty').textContent = place.about || '';
+
+  const imgEl = document.getElementById('profileImg');
+  imgEl.innerHTML = place.image
+    ? `<img src="${place.image}" alt="${place.name}"/>`
+    : '🏪';
+
+  if (place.rating) {
+    document.getElementById('ratingRow').innerHTML = starBar(place.rating, place.reviews);
+  }
+
+  const infoCards = document.getElementById('infoCards');
+  const infos = [
+    { icon: '📍', label: 'العنوان', value: place.address },
+    { icon: '🕐', label: 'ساعات العمل', value: place.workingHours },
+    { icon: '📞', label: 'رقم التواصل', value: place.phone },
+  ].filter(i => i.value);
+
+  infos.forEach(info => infoCards.appendChild(buildInfoCard(info.icon, info.label, info.value)));
+
+  const actions = document.getElementById('actionButtons');
+  if (place.phone) {
+    actions.innerHTML += `<a href="tel:${place.phone}" class="action-btn btn-call">📞 اتصل بنا</a>`;
+    actions.innerHTML += `<a href="https://wa.me/2${place.phone.replace(/^0/, '')}" target="_blank" class="action-btn btn-whatsapp">💬 تواصل عبر واتساب</a>`;
+  }
+  if (place.location) {
+    actions.innerHTML += `<a href="${place.location}" target="_blank" class="action-btn btn-location">📍 الموقع على الخريطة</a>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initDetail);

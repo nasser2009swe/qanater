@@ -1,0 +1,111 @@
+{
+  "services": [
+    {
+      "id": "clinics",
+      "name": "عيادات",
+      "icon": "🏥",
+      "color": "#4CAF82",
+      "description": "عيادات طبية متخصصة بالقناطر الخيرية",
+      "subcategories": [
+        { "id": "internal", "name": "طب باطني", "icon": "🫀" },
+        { "id": "dental", "name": "أسنان", "icon": "🦷" },
+        { "id": "bones", "name": "عظام", "icon": "🦴" },
+        { "id": "children", "name": "أطفال", "icon": "👶" },
+        { "id": "skin", "name": "جلدية", "icon": "💆" },
+        { "id": "eye", "name": "عيون", "icon": "👁️" },
+        { "id": "ent", "name": "أنف وأذن وحنجرة", "icon": "👂" },
+        { "id": "gynecology", "name": "نساء وتوليد", "icon": "🤰" },
+        { "id": "urology", "name": "مسالك بولية", "icon": "🩺" },
+        { "id": "neurology", "name": "أعصاب", "icon": "🧠" }
+      ]
+    },
+    {
+      "id": "pharmacies",
+      "name": "صيدليات",
+      "icon": "💊",
+      "color": "#2196F3",
+      "description": "صيدليات وأدوية بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "labs",
+      "name": "معامل تحاليل",
+      "icon": "🔬",
+      "color": "#9C27B0",
+      "description": "معامل التحاليل الطبية بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "radiology",
+      "name": "مراكز أشعة",
+      "icon": "🩻",
+      "color": "#FF5722",
+      "description": "مراكز الأشعة والتصوير الطبي",
+      "subcategories": []
+    },
+    {
+      "id": "restaurants",
+      "name": "مطاعم",
+      "icon": "🍽️",
+      "color": "#FF9800",
+      "description": "مطاعم متنوعة بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "cafes",
+      "name": "كافيهات",
+      "icon": "☕",
+      "color": "#795548",
+      "description": "كافيهات ومقاهي بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "bakeries",
+      "name": "مخابز وحلواني",
+      "icon": "🥐",
+      "color": "#E91E63",
+      "description": "مخابز وحلواني بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "schools",
+      "name": "مدارس",
+      "icon": "🏫",
+      "color": "#00BCD4",
+      "description": "مدارس وتعليم بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "supermarkets",
+      "name": "سوبر ماركت",
+      "icon": "🛒",
+      "color": "#4CAF50",
+      "description": "سوبر ماركت ومحلات بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "gyms",
+      "name": "جيم ورياضة",
+      "icon": "💪",
+      "color": "#F44336",
+      "description": "صالات رياضية وجيم بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "beauty",
+      "name": "صالونات تجميل",
+      "icon": "💇",
+      "color": "#FF4081",
+      "description": "صالونات تجميل وكوافير بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "electronics",
+      "name": "إلكترونيات",
+      "icon": "📱",
+      "color": "#607D8B",
+      "description": "محلات إلكترونيات وموبايلات بالقناطر الخيرية",
+      "subcategories": []
+    }
+  ]
+}

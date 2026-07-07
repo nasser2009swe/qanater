@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>لوحة التحكم - القناطر الخيرية</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+</head>
+<body class="admin-body">
+
+  <div class="admin-header">
+    <h1>⚙️ لوحة التحكم</h1>
+    <button class="admin-logout" onclick="logout()">خروج 🚪</button>
+  </div>
+
+  <div class="admin-main">
+
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchTab('doctors', this)">👨‍⚕️ الأطباء</button>
+      <button class="admin-tab" onclick="switchTab('places', this)">🏪 الأماكن</button>
+      <button class="admin-tab" onclick="switchTab('export', this)">📥 تصدير</button>
+    </div>
+
+    <!-- DOCTORS PANEL -->
+    <div class="admin-panel active" id="panel-doctors">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <span class="admin-card-title">➕ إضافة طبيب جديد</span>
+        </div>
+        <div class="alert alert-success" id="docSuccess">✅ تم الحفظ بنجاح</div>
+        <div class="alert alert-error" id="docError">❌ خطأ في البيانات</div>
+
+        <div class="form-group">
+          <label class="form-label">الاسم *</label>
+          <input type="text" class="form-input" id="docName" placeholder="د. أحمد محمود"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">التخصص *</label>
+          <select class="form-select" id="docSpecialty">
+            <option value="internal">طب باطني</option>
+            <option value="dental">أسنان</option>
+            <option value="bones">عظام</option>
+            <option value="children">أطفال</option>
+            <option value="skin">جلدية</option>
+            <option value="eye">عيون</option>
+            <option value="ent">أنف وأذن وحنجرة</option>
+            <option value="gynecology">نساء وتوليد</option>
+            <option value="urology">مسالك بولية</option>
+            <option value="neurology">أعصاب</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">رقم الهاتف</label>
+          <input type="text" class="form-input" id="docPhone" placeholder="01xxxxxxxxx"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">العنوان</label>
+          <input type="text" class="form-input" id="docAddress" placeholder="شارع الجمهورية، القناطر الخيرية"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">مواعيد الكشف</label>
+          <input type="text" class="form-input" id="docSchedule" placeholder="السبت والاثنين 5م - 9م"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">رسوم الكشف</label>
+          <input type="text" class="form-input" id="docFees" placeholder="150 جنيه"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">رابط الموقع (Google Maps)</label>
+          <input type="text" class="form-input" id="docLocation" placeholder="https://maps.google.com/..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">رابط الصورة (اختياري)</label>
+          <input type="text" class="form-input" id="docImage" placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">نبذة عن الطبيب</label>
+          <textarea class="form-textarea" id="docAbout" placeholder="استشاري جراحة العظام..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">التقييم (1-5)</label>
+          <input type="number" class="form-input" id="docRating" placeholder="4.5" min="1" max="5" step="0.1"/>
+        </div>
+        <button class="btn-primary" id="saveDoctorBtn" onclick="saveDoctor()">💾 حفظ الطبيب</button>
+      </div>
+
+      <!-- Doctors List -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <span class="admin-card-title">📋 قائمة الأطباء</span>
+          <span id="docCount" style="color:rgba(255,255,255,0.5);font-size:0.8rem;"></span>
+        </div>
+        <div id="doctorsList"></div>
+      </div>
+    </div>
+
+    <!-- PLACES PANEL -->
+    <div class="admin-panel" id="panel-places">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <span class="admin-card-title">➕ إضافة مكان جديد</span>
+        </div>
+        <div class="alert alert-success" id="placeSuccess">✅ تم الحفظ بنجاح</div>
+        <div class="alert alert-error" id="placeError">❌ خطأ في البيانات</div>
+
+        <div class="form-group">
+          <label class="form-label">الاسم *</label>
+          <input type="text" class="form-input" id="placeName" placeholder="صيدلية النيل"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">نوع الخدمة *</label>
+          <select class="form-select" id="placeService">
+            <option value="pharmacies">صيدلية</option>
+            <option value="labs">معمل تحاليل</option>
+            <option value="radiology">مركز أشعة</option>
+            <option value="restaurants">مطعم</option>
+            <option value="cafes">كافيه</option>
+            <option value="bakeries">مخبز/حلواني</option>
+            <option value="schools">مدرسة</option>
+            <option value="supermarkets">سوبر ماركت</option>
+            <option value="gyms">جيم</option>
+            <option value="beauty">صالون تجميل</option>
+            <option value="electronics">إلكترونيات</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">رقم الهاتف</label>
+          <input type="text" class="form-input" id="placePhone" placeholder="01xxxxxxxxx"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">العنوان</label>
+          <input type="text" class="form-input" id="placeAddress" placeholder="شارع الجمهورية، القناطر الخيرية"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ساعات العمل</label>
+          <input type="text" class="form-input" id="placeHours" placeholder="9ص - 12م"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">رابط الموقع (Google Maps)</label>
+          <input type="text" class="form-input" id="placeLocation" placeholder="https://maps.google.com/..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">رابط الصورة (اختياري)</label>
+          <input type="text" class="form-input" id="placeImage" placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">وصف المكان</label>
+          <textarea class="form-textarea" id="placeAbout" placeholder="وصف مختصر..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">التقييم (1-5)</label>
+          <input type="number" class="form-input" id="placeRating" placeholder="4.5" min="1" max="5" step="0.1"/>
+        </div>
+        <button class="btn-primary" id="savePlaceBtn" onclick="savePlace()">💾 حفظ المكان</button>
+      </div>
+
+      <!-- Places List -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <span class="admin-card-title">📋 قائمة الأماكن</span>
+          <span id="placeCount" style="color:rgba(255,255,255,0.5);font-size:0.8rem;"></span>
+        </div>
+        <div id="placesList"></div>
+      </div>
+    </div>
+
+    <!-- EXPORT PANEL -->
+    <div class="admin-panel" id="panel-export">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <span class="admin-card-title">📥 تصدير البيانات</span>
+        </div>
+        <p style="color:rgba(255,255,255,0.6);font-size:0.85rem;margin-bottom:16px;line-height:1.6;">
+          بعد إضافة أو تعديل البيانات، حمّل الملف ورفعه على GitHub في مكان <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">data/listings.json</code>
+        </p>
+        <button class="btn-primary" onclick="exportListings()">📥 تحميل listings.json</button>
+        <br/><br/>
+        <a href="../index.html" style="display:block;text-align:center;color:rgba(255,255,255,0.5);font-size:0.85rem;text-decoration:none;margin-top:10px;">← العودة للموقع</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
