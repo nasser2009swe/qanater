@@ -2,14 +2,17 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#1B4F72"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <link rel="manifest" href="../manifest.json"/>
   <title>القناطر الخيرية - تفاصيل</title>
   <link rel="stylesheet" href="../css/style.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
 </head>
 <body>
   <header class="header header-sub">
-    <div class="header-bg"></div>
     <div class="header-content">
       <div class="header-top">
         <a id="backBtn" href="javascript:history.back()" class="back-btn">← رجوع</a>
@@ -21,9 +24,9 @@
     </div>
   </header>
 
-  <main class="main-content detail-main">
-    <!-- Profile Card -->
-    <div class="profile-card" id="profileCard">
+  <main class="detail-main">
+    <!-- Profile -->
+    <div class="profile-card fade-in" id="profileCard">
       <div class="profile-img-wrap">
         <div class="profile-img" id="profileImg">👤</div>
       </div>
@@ -32,16 +35,30 @@
       <div class="rating-row" id="ratingRow"></div>
     </div>
 
-    <!-- Info Cards -->
+    <!-- Info -->
     <div class="info-cards" id="infoCards"></div>
 
-    <!-- Action Buttons -->
+    <!-- Actions -->
     <div class="action-buttons" id="actionButtons"></div>
   </main>
 
-  <footer class="footer">
-    <p>القناطر الخيرية © 2024</p>
-  </footer>
+  <nav class="bottom-nav">
+    <a href="../index.html" class="nav-btn">
+      <span class="nav-icon">🏠</span><span>الرئيسية</span>
+    </a>
+    <a href="service.html?id=clinics" class="nav-btn">
+      <span class="nav-icon">🏥</span><span>عيادات</span>
+    </a>
+    <a href="service.html?id=restaurants" class="nav-btn">
+      <span class="nav-icon">🍽️</span><span>مطاعم</span>
+    </a>
+    <a href="service.html?id=pharmacies" class="nav-btn">
+      <span class="nav-icon">💊</span><span>صيدليات</span>
+    </a>
+    <a href="../admin/login.html" class="nav-btn">
+      <span class="nav-icon">⚙️</span><span>إدارة</span>
+    </a>
+  </nav>
 
   <script src="../js/detail.js"></script>
 </body>

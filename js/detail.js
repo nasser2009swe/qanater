@@ -2,9 +2,7 @@ const STORAGE_KEY = 'qanater_listings';
 
 async function loadListings() {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) {
-    try { return JSON.parse(stored); } catch(e) {}
-  }
+  if (stored) { try { return JSON.parse(stored); } catch(e) {} }
   try {
     const res = await fetch('../data/listings.json?t=' + Date.now());
     return await res.json();
@@ -28,18 +26,13 @@ async function initDetail() {
     item = (data.places || []).find(p => p.id === id);
     if (item) renderPlace(item);
   }
-
-  if (!item) {
-    document.getElementById('detailName').textContent = 'غير موجود';
-  }
+  if (!item) document.getElementById('detailName').textContent = 'غير موجود';
 }
 
 function starBar(rating, reviews) {
   const full = Math.floor(rating || 0);
-  return `
-    <span class="stars">${'★'.repeat(full)}${'☆'.repeat(5 - full)}</span>
-    <span class="rating-num">${rating} ${reviews ? '(' + reviews + ' تقييم)' : ''}</span>
-  `;
+  return `<span class="stars">${'★'.repeat(full)}${'☆'.repeat(5-full)}</span>
+          <span class="rating-num">${rating}${reviews ? ' (' + reviews + ' تقييم)' : ''}</span>`;
 }
 
 function buildInfoCard(icon, label, value) {
@@ -50,77 +43,60 @@ function buildInfoCard(icon, label, value) {
     <div class="info-body">
       <div class="info-label">${label}</div>
       <div class="info-value">${value}</div>
-    </div>
-  `;
+    </div>`;
   return card;
 }
 
 function renderDoctor(doc) {
-  document.title = `القناطر الخيرية - ${doc.name}`;
+  document.title = `القناطر - ${doc.name}`;
   document.getElementById('detailName').textContent = doc.name;
   document.getElementById('profileName').textContent = doc.name;
   document.getElementById('profileSpecialty').textContent = doc.about || '';
-
   const imgEl = document.getElementById('profileImg');
-  imgEl.innerHTML = doc.image
-    ? `<img src="${doc.image}" alt="${doc.name}"/>`
-    : '👨‍⚕️';
-
-  if (doc.rating) {
-    document.getElementById('ratingRow').innerHTML = starBar(doc.rating, doc.reviews);
-  }
+  imgEl.innerHTML = doc.image ? `<img src="${doc.image}" alt="${doc.name}"/>` : '👨‍⚕️';
+  if (doc.rating) document.getElementById('ratingRow').innerHTML = starBar(doc.rating, doc.reviews);
 
   const infoCards = document.getElementById('infoCards');
-  const infos = [
+  [
     { icon: '📍', label: 'العنوان', value: doc.address },
     { icon: '🕐', label: 'مواعيد الكشف', value: doc.schedule },
     { icon: '💰', label: 'رسوم الكشف', value: doc.fees },
     { icon: '📞', label: 'رقم التواصل', value: doc.phone },
-  ].filter(i => i.value);
-
-  infos.forEach(info => infoCards.appendChild(buildInfoCard(info.icon, info.label, info.value)));
+  ].filter(i => i.value).forEach(i => infoCards.appendChild(buildInfoCard(i.icon, i.label, i.value)));
 
   const actions = document.getElementById('actionButtons');
   if (doc.phone) {
-    actions.innerHTML += `<a href="tel:${doc.phone}" class="action-btn btn-call">📞 اتصل بالعيادة</a>`;
-    actions.innerHTML += `<a href="https://wa.me/2${doc.phone.replace(/^0/, '')}" target="_blank" class="action-btn btn-whatsapp">💬 تواصل عبر واتساب</a>`;
+    actions.innerHTML += `<a href="tel:${doc.phone}" class="action-btn btn-call">📞 اتصال</a>`;
+    actions.innerHTML += `<a href="https://wa.me/2${doc.phone.replace(/^0/,'')}" target="_blank" class="action-btn btn-whatsapp">💬 واتساب</a>`;
   }
   if (doc.location) {
-    actions.innerHTML += `<a href="${doc.location}" target="_blank" class="action-btn btn-location">📍 الموقع على الخريطة</a>`;
+    actions.innerHTML += `<a href="${doc.location}" target="_blank" class="action-btn btn-location action-btn-wide">📍 الموقع على الخريطة</a>`;
   }
 }
 
 function renderPlace(place) {
-  document.title = `القناطر الخيرية - ${place.name}`;
+  document.title = `القناطر - ${place.name}`;
   document.getElementById('detailName').textContent = place.name;
   document.getElementById('profileName').textContent = place.name;
   document.getElementById('profileSpecialty').textContent = place.about || '';
-
   const imgEl = document.getElementById('profileImg');
-  imgEl.innerHTML = place.image
-    ? `<img src="${place.image}" alt="${place.name}"/>`
-    : '🏪';
-
-  if (place.rating) {
-    document.getElementById('ratingRow').innerHTML = starBar(place.rating, place.reviews);
-  }
+  imgEl.innerHTML = place.image ? `<img src="${place.image}" alt="${place.name}"/>` : '🏪';
+  if (place.rating) document.getElementById('ratingRow').innerHTML = starBar(place.rating, place.reviews);
 
   const infoCards = document.getElementById('infoCards');
-  const infos = [
+  [
     { icon: '📍', label: 'العنوان', value: place.address },
     { icon: '🕐', label: 'ساعات العمل', value: place.workingHours },
     { icon: '📞', label: 'رقم التواصل', value: place.phone },
-  ].filter(i => i.value);
-
-  infos.forEach(info => infoCards.appendChild(buildInfoCard(info.icon, info.label, info.value)));
+  ].filter(i => i.value).forEach(i => infoCards.appendChild(buildInfoCard(i.icon, i.label, i.value)));
 
   const actions = document.getElementById('actionButtons');
   if (place.phone) {
-    actions.innerHTML += `<a href="tel:${place.phone}" class="action-btn btn-call">📞 اتصل بنا</a>`;
-    actions.innerHTML += `<a href="https://wa.me/2${place.phone.replace(/^0/, '')}" target="_blank" class="action-btn btn-whatsapp">💬 تواصل عبر واتساب</a>`;
+    actions.innerHTML += `<a href="tel:${place.phone}" class="action-btn btn-call">📞 اتصال</a>`;
+    actions.innerHTML += `<a href="https://wa.me/2${place.phone.replace(/^0/,'')}" target="_blank" class="action-btn btn-whatsapp">💬 واتساب</a>`;
   }
   if (place.location) {
-    actions.innerHTML += `<a href="${place.location}" target="_blank" class="action-btn btn-location">📍 الموقع على الخريطة</a>`;
+    actions.innerHTML += `<a href="${place.location}" target="_blank" class="action-btn btn-location action-btn-wide">📍 الموقع على الخريطة</a>`;
   }
 }
 
