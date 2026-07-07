@@ -28,6 +28,9 @@
 
   <script>
     async function loadConfig() {
+      // Check localStorage for admin-changed credentials first
+      const stored = localStorage.getItem('qanater_config');
+      if (stored) { try { return JSON.parse(stored); } catch(e) {} }
       try {
         const res = await fetch('../data/config.json?t=' + Date.now());
         return await res.json();

@@ -191,6 +191,47 @@ function renderPlacesList(data) {
   `).join('');
 }
 
+// ===== SETTINGS =====
+async function saveSettings() {
+  const username = document.getElementById('newUsername').value.trim();
+  const password = document.getElementById('newPassword').value.trim();
+  const confirm  = document.getElementById('confirmPassword').value.trim();
+
+  if (!username || !password || !confirm) { showAlert('settingsError'); return; }
+  if (password !== confirm) {
+    document.getElementById('settingsError').textContent = '❌ كلمتا المرور غير متطابقتين';
+    showAlert('settingsError');
+    return;
+  }
+
+  // Load existing config
+  let config = {};
+  try {
+    const res = await fetch('../data/config.json?t=' + Date.now());
+    config = await res.json();
+  } catch(e) {}
+
+  config.username = username;
+  config.password = password;
+
+  // Save in localStorage
+  localStorage.setItem('qanater_config', JSON.stringify(config));
+
+  // Auto-download the new config.json
+  const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'config.json';
+  a.click();
+  URL.revokeObjectURL(url);
+
+  document.getElementById('newUsername').value  = '';
+  document.getElementById('newPassword').value  = '';
+  document.getElementById('confirmPassword').value = '';
+  showAlert('settingsSuccess');
+}
+
 // ===== EXPORT =====
 function exportListings() {
   const raw = localStorage.getItem(STORAGE_KEY);

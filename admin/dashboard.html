@@ -21,6 +21,7 @@
       <button class="admin-tab active" onclick="switchTab('doctors', this)">👨‍⚕️ الأطباء</button>
       <button class="admin-tab" onclick="switchTab('places', this)">🏪 الأماكن</button>
       <button class="admin-tab" onclick="switchTab('export', this)">📥 تصدير</button>
+      <button class="admin-tab" onclick="switchTab('settings', this)">🔐 الإعدادات</button>
     </div>
 
     <!-- DOCTORS PANEL -->
@@ -163,6 +164,33 @@
           <span id="placeCount" style="color:rgba(255,255,255,0.5);font-size:0.8rem;"></span>
         </div>
         <div id="placesList"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div class="admin-panel" id="panel-settings">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <span class="admin-card-title">🔐 تغيير بيانات الدخول</span>
+        </div>
+        <div class="alert alert-success" id="settingsSuccess">✅ تم حفظ الإعدادات</div>
+        <div class="alert alert-error" id="settingsError">❌ تأكد من ملء كل الحقول</div>
+        <div class="form-group">
+          <label class="form-label">اسم المستخدم الجديد</label>
+          <input type="text" class="form-input" id="newUsername" placeholder="admin"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">كلمة المرور الجديدة</label>
+          <input type="password" class="form-input" id="newPassword" placeholder="••••••••"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">تأكيد كلمة المرور</label>
+          <input type="password" class="form-input" id="confirmPassword" placeholder="••••••••"/>
+        </div>
+        <button class="btn-primary" onclick="saveSettings()">💾 حفظ الإعدادات</button>
+        <p style="color:rgba(255,255,255,0.4);font-size:0.78rem;margin-top:12px;line-height:1.6;text-align:center;">
+          ⚠️ بعد الحفظ، ارفع ملف <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px;">data/config.json</code> على GitHub
+        </p>
       </div>
     </div>
 
