@@ -75,6 +75,20 @@ function renderDoctor(doc) {
   if (doc.facebook) {
     actions.innerHTML += `<a href="${doc.facebook}" target="_blank" class="action-btn btn-facebook action-btn-wide" style="background:#1877f2;color:#fff;">📘 صفحة الفيسبوك</a>`;
   }
+  
+  if (navigator.share) {
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'action-btn btn-share action-btn-wide';
+    shareBtn.innerHTML = '📤 مشاركة';
+    shareBtn.onclick = () => {
+      navigator.share({
+        title: `القناطر الخيرية - ${doc.name}`,
+        text: `تعرف على ${doc.name} في القناطر الخيرية!`,
+        url: window.location.href
+      }).catch(err => console.log('Error sharing', err));
+    };
+    actions.appendChild(shareBtn);
+  }
 }
 
 function renderPlace(place) {
@@ -103,6 +117,20 @@ function renderPlace(place) {
   }
   if (place.facebook) {
     actions.innerHTML += `<a href="${place.facebook}" target="_blank" class="action-btn btn-facebook action-btn-wide" style="background:#1877f2;color:#fff;">📘 صفحة الفيسبوك</a>`;
+  }
+
+  if (navigator.share) {
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'action-btn btn-share action-btn-wide';
+    shareBtn.innerHTML = '📤 مشاركة';
+    shareBtn.onclick = () => {
+      navigator.share({
+        title: `القناطر الخيرية - ${place.name}`,
+        text: `تعرف على ${place.name} في القناطر الخيرية!`,
+        url: window.location.href
+      }).catch(err => console.log('Error sharing', err));
+    };
+    actions.appendChild(shareBtn);
   }
 }
 

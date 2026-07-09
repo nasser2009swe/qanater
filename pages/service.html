@@ -38,7 +38,11 @@
         <span class="section-dot"></span>
         <h2 id="listingsTitle">القائمة</h2>
       </div>
-      <div class="listings-grid" id="listingsGrid"></div>
+      <div class="listings-grid" id="listingsGrid">
+        <div class="listing-card skeleton" style="height: 100px;"></div>
+        <div class="listing-card skeleton" style="height: 100px;"></div>
+        <div class="listing-card skeleton" style="height: 100px;"></div>
+      </div>
       <div class="empty-state hidden" id="emptyState">
         <div class="empty-icon">📭</div>
         <p>لا توجد بيانات حتى الآن</p>
@@ -66,6 +70,7 @@
   </nav>
 
   <script src="../js/service.js"></script>
+  <script src="../js/ui.js"></script>
   <script>
     // Highlight active nav tab based on current service
     document.addEventListener('DOMContentLoaded', () => {
