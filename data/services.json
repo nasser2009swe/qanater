@@ -16,7 +16,7 @@
         { "id": "ent", "name": "أنف وأذن وحنجرة", "icon": "👂" },
         { "id": "gynecology", "name": "نساء وتوليد", "icon": "🤰" },
         { "id": "urology", "name": "مسالك بولية", "icon": "🩺" },
-        { "id": "neurology", "name": "أعصاب", "icon": "🧠" }
+        { "id": "neurology", "name": "مخ واعصاب", "icon": "🧠" }
       ]
     },
     {
