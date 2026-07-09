@@ -68,6 +68,28 @@
     </a>
   </nav>
 
+  <!-- Ad Popup Overlay -->
+  <div id="adOverlay" class="ad-overlay">
+    <div id="adModal" class="ad-modal">
+      <button class="ad-close" onclick="closeAd()">✕</button>
+      <div id="adImage" class="ad-image-wrap" style="display:none">
+        <img alt=""/>
+      </div>
+      <div class="ad-body">
+        <h2 id="adTitle" class="ad-title"></h2>
+        <p id="adDesc" class="ad-desc"></p>
+      </div>
+      <div id="adDots" class="ad-dots"></div>
+      <div id="adNav" class="ad-nav" style="display:none">
+        <button id="adPrev" class="ad-nav-btn">‹</button>
+        <button id="adNext" class="ad-nav-btn">›</button>
+      </div>
+      <a id="adLink" href="#" class="ad-link-btn" style="display:none" target="_blank"></a>
+      <button class="ad-dismiss" onclick="closeAd()">متابعة الموقع</button>
+    </div>
+  </div>
+
   <script src="js/app.js"></script>
+  <script src="js/ads.js"></script>
 </body>
 </html>

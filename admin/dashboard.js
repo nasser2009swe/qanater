@@ -334,6 +334,129 @@ async function saveSettings() {
   showAlert('settingsSuccess');
 }
 
+// ===== ADS =====
+const ADS_KEY = 'qanater_ads';
+let editingAdId = null;
+
+async function loadAds() {
+  const stored = localStorage.getItem(ADS_KEY);
+  if (stored) { try { return JSON.parse(stored); } catch(e) {} }
+  try {
+    const res = await fetch('../data/ads.json?t=' + Date.now());
+    const data = await res.json();
+    const ads = data.ads || [];
+    localStorage.setItem(ADS_KEY, JSON.stringify(ads));
+    return ads;
+  } catch(e) { return []; }
+}
+
+function saveAdsData(ads) { localStorage.setItem(ADS_KEY, JSON.stringify(ads)); }
+
+async function saveAd() {
+  const title = document.getElementById('adTitle').value.trim();
+  if (!title) { showAlert('adError'); return; }
+
+  const ads = await loadAds();
+  const adObj = {
+    title,
+    description: document.getElementById('adDesc').value.trim(),
+    image:       document.getElementById('adImage').value.trim(),
+    link:        document.getElementById('adLink').value.trim(),
+    linkText:    document.getElementById('adLinkText').value.trim() || 'اعرف أكثر',
+    bgColor:     document.getElementById('adBgColor').value,
+    active:      document.getElementById('adActive').checked,
+  };
+
+  if (editingAdId) {
+    const idx = ads.findIndex(a => a.id === editingAdId);
+    if (idx !== -1) ads[idx] = { ...ads[idx], ...adObj };
+    editingAdId = null;
+    document.getElementById('saveAdBtn').textContent   = '💾 حفظ الإعلان';
+    document.getElementById('adFormTitle').textContent = '📢 إضافة إعلان جديد';
+    document.getElementById('cancelAdEdit').style.display = 'none';
+  } else {
+    ads.push({ id: genId('ad'), ...adObj });
+  }
+
+  saveAdsData(ads);
+  showAlert('adSuccess');
+  clearAdForm();
+  renderAdsList(ads);
+}
+
+function editAd(id) {
+  loadAds().then(ads => {
+    const ad = ads.find(a => a.id === id);
+    if (!ad) return;
+    editingAdId = id;
+    document.getElementById('adTitle').value    = ad.title       || '';
+    document.getElementById('adDesc').value     = ad.description || '';
+    document.getElementById('adImage').value    = ad.image       || '';
+    document.getElementById('adLink').value     = ad.link        || '';
+    document.getElementById('adLinkText').value = ad.linkText    || '';
+    document.getElementById('adBgColor').value  = ad.bgColor     || '#1B4F72';
+    document.getElementById('adActive').checked = ad.active !== false;
+    document.getElementById('saveAdBtn').textContent   = '✏️ حفظ التعديل';
+    document.getElementById('adFormTitle').textContent = '✏️ تعديل الإعلان';
+    document.getElementById('cancelAdEdit').style.display = 'block';
+    scrollToForm('adFormCard');
+  });
+}
+
+function cancelAdEdit() {
+  editingAdId = null;
+  clearAdForm();
+  document.getElementById('saveAdBtn').textContent   = '💾 حفظ الإعلان';
+  document.getElementById('adFormTitle').textContent = '📢 إضافة إعلان جديد';
+  document.getElementById('cancelAdEdit').style.display = 'none';
+}
+
+function clearAdForm() {
+  ['adTitle','adDesc','adImage','adLink','adLinkText'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('adBgColor').value  = '#1B4F72';
+  document.getElementById('adActive').checked = true;
+}
+
+async function deleteAd(id) {
+  if (!confirm('هل تريد حذف هذا الإعلان؟')) return;
+  if (editingAdId === id) cancelAdEdit();
+  const ads = (await loadAds()).filter(a => a.id !== id);
+  saveAdsData(ads);
+  renderAdsList(ads);
+}
+
+async function toggleAd(id) {
+  const ads = await loadAds();
+  const idx = ads.findIndex(a => a.id === id);
+  if (idx !== -1) ads[idx].active = !ads[idx].active;
+  saveAdsData(ads);
+  renderAdsList(ads);
+}
+
+function renderAdsList(ads) {
+  const list = document.getElementById('adsList');
+  document.getElementById('adCount').textContent = `(${ads.length})`;
+  if (!ads.length) {
+    list.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px;">لا توجد إعلانات بعد</p>';
+    return;
+  }
+  list.innerHTML = ads.map(a => `
+    <div class="listing-item">
+      <div class="listing-item-info">
+        <div class="listing-item-name">${a.title}</div>
+        <div style="margin-top:4px;">
+          <span class="${a.active ? 'ad-active-badge' : 'ad-inactive-badge'}">${a.active ? '● مفعّل' : '○ معطّل'}</span>
+        </div>
+      </div>
+      <div class="listing-item-actions">
+        <button class="btn-edit" onclick="toggleAd('${a.id}')" title="${a.active ? 'إيقاف' : 'تفعيل'}">${a.active ? '⏸' : '▶'}</button>
+        <button class="btn-edit" onclick="editAd('${a.id}')">✏️</button>
+        <button class="btn-danger" onclick="deleteAd('${a.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
 // ===== EXPORT =====
 function exportListings() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -345,6 +468,16 @@ function exportListings() {
   URL.revokeObjectURL(url);
 }
 
+function exportAds() {
+  const raw = localStorage.getItem(ADS_KEY);
+  if (!raw) { alert('لا توجد إعلانات للتصدير'); return; }
+  const blob = new Blob([JSON.stringify({ ads: JSON.parse(raw) }, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'ads.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ===== LOGOUT =====
 function logout() {
   sessionStorage.removeItem('adminAuth');
@@ -353,9 +486,11 @@ function logout() {
 
 // ===== INIT =====
 async function init() {
-  const data = await loadData();
+  const [data, ads] = await Promise.all([loadData(), loadAds()]);
   renderDoctorsList(data);
   renderPlacesList(data);
+  renderAdsList(ads);
 }
 
 init();
+

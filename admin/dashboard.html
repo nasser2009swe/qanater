@@ -20,6 +20,7 @@
     <div class="admin-tabs">
       <button class="admin-tab active" onclick="switchTab('doctors', this)">👨‍⚕️ الأطباء</button>
       <button class="admin-tab" onclick="switchTab('places', this)">🏪 الأماكن</button>
+      <button class="admin-tab" onclick="switchTab('ads', this)">📢 الإعلانات</button>
       <button class="admin-tab" onclick="switchTab('export', this)">📥 تصدير</button>
       <button class="admin-tab" onclick="switchTab('settings', this)">🔐 الإعدادات</button>
     </div>
@@ -169,6 +170,62 @@
       </div>
     </div>
 
+    <!-- ADS PANEL -->
+    <div class="admin-panel" id="panel-ads">
+      <div class="admin-card" id="adFormCard">
+        <div class="admin-card-header">
+          <span class="admin-card-title" id="adFormTitle">📢 إضافة إعلان جديد</span>
+        </div>
+        <div class="alert alert-success" id="adSuccess">✅ تم حفظ الإعلان</div>
+        <div class="alert alert-error" id="adError">❌ أدخل عنوان الإعلان</div>
+
+        <div class="form-group">
+          <label class="form-label">عنوان الإعلان *</label>
+          <input type="text" class="form-input" id="adTitle" placeholder="عرض خاص هذا الأسبوع!"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">نص الإعلان</label>
+          <textarea class="form-textarea" id="adDesc" placeholder="تفاصيل الإعلان..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">رابط صورة الإعلان (اختياري)</label>
+          <input type="text" class="form-input" id="adImage" placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">رابط الإعلان (اختياري)</label>
+          <input type="text" class="form-input" id="adLink" placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">نص زر الرابط</label>
+          <input type="text" class="form-input" id="adLinkText" placeholder="اعرف أكثر"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">لون خلفية الإعلان</label>
+          <input type="color" class="form-input" id="adBgColor" value="#1B4F72" style="height:50px;padding:6px;"/>
+        </div>
+        <div class="form-group">
+          <div class="toggle-wrap">
+            <label class="toggle">
+              <input type="checkbox" id="adActive" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">الإعلان مفعّل (يظهر للزوار)</span>
+          </div>
+        </div>
+        <button class="btn-primary" id="saveAdBtn" onclick="saveAd()">💾 حفظ الإعلان</button>
+        <button class="btn-cancel" id="cancelAdEdit" onclick="cancelAdEdit()" style="display:none;width:100%;margin-top:10px;">✖️ إلغاء التعديل</button>
+      </div>
+
+      <!-- Ads List -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <span class="admin-card-title">📋 قائمة الإعلانات</span>
+          <span id="adCount" style="color:rgba(255,255,255,0.5);font-size:0.8rem;"></span>
+        </div>
+        <div id="adsList"></div>
+      </div>
+    </div>
+
     <!-- SETTINGS PANEL -->
     <div class="admin-panel" id="panel-settings">
       <div class="admin-card">
@@ -206,6 +263,11 @@
           بعد إضافة أو تعديل البيانات، حمّل الملف ورفعه على GitHub في مكان <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">data/listings.json</code>
         </p>
         <button class="btn-primary" onclick="exportListings()">📥 تحميل listings.json</button>
+        <br/><br/>
+        <p style="color:rgba(255,255,255,0.6);font-size:0.85rem;margin-bottom:12px;line-height:1.6;">
+          بعد تعديل الإعلانات، حمّل الملف وارفعه على GitHub في مكان <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">data/ads.json</code>
+        </p>
+        <button class="btn-primary" onclick="exportAds()" style="background:linear-gradient(135deg,#8E44AD,#9B59B6);">📢 تحميل ads.json</button>
         <br/><br/>
         <a href="../index.html" style="display:block;text-align:center;color:rgba(255,255,255,0.5);font-size:0.85rem;text-decoration:none;margin-top:10px;">← العودة للموقع</a>
       </div>
