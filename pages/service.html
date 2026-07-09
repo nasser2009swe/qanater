@@ -74,6 +74,14 @@
         if (btn.href.includes('id=' + id)) btn.classList.add('active');
       });
     });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/qanater/sw.js').then(reg => {
+          console.log('SW registered!', reg);
+        }).catch(err => console.log('SW registration failed', err));
+      });
+    }
   </script>
 </body>
 </html>
