@@ -72,6 +72,9 @@ function renderDoctor(doc) {
   if (doc.location) {
     actions.innerHTML += `<a href="${doc.location}" target="_blank" class="action-btn btn-location action-btn-wide">📍 الموقع على الخريطة</a>`;
   }
+  if (doc.facebook) {
+    actions.innerHTML += `<a href="${doc.facebook}" target="_blank" class="action-btn btn-facebook action-btn-wide" style="background:#1877f2;color:#fff;">📘 صفحة الفيسبوك</a>`;
+  }
 }
 
 function renderPlace(place) {
@@ -97,6 +100,9 @@ function renderPlace(place) {
   }
   if (place.location) {
     actions.innerHTML += `<a href="${place.location}" target="_blank" class="action-btn btn-location action-btn-wide">📍 الموقع على الخريطة</a>`;
+  }
+  if (place.facebook) {
+    actions.innerHTML += `<a href="${place.facebook}" target="_blank" class="action-btn btn-facebook action-btn-wide" style="background:#1877f2;color:#fff;">📘 صفحة الفيسبوك</a>`;
   }
 }
 

@@ -79,6 +79,7 @@ async function saveDoctor() {
         phone:    document.getElementById('docPhone').value.trim(),
         address:  document.getElementById('docAddress').value.trim(),
         location: document.getElementById('docLocation').value.trim(),
+        facebook: document.getElementById('docFacebook').value.trim(),
         schedule: document.getElementById('docSchedule').value.trim(),
         fees:     document.getElementById('docFees').value.trim(),
         about:    document.getElementById('docAbout').value.trim(),
@@ -97,6 +98,7 @@ async function saveDoctor() {
       phone:    document.getElementById('docPhone').value.trim(),
       address:  document.getElementById('docAddress').value.trim(),
       location: document.getElementById('docLocation').value.trim(),
+      facebook: document.getElementById('docFacebook').value.trim(),
       schedule: document.getElementById('docSchedule').value.trim(),
       fees:     document.getElementById('docFees').value.trim(),
       about:    document.getElementById('docAbout').value.trim(),
@@ -124,6 +126,7 @@ function editDoctor(id) {
     document.getElementById('docSchedule').value = doc.schedule || '';
     document.getElementById('docFees').value     = doc.fees     || '';
     document.getElementById('docLocation').value = doc.location || '';
+    document.getElementById('docFacebook').value = doc.facebook || '';
     document.getElementById('docImage').value    = doc.image    || '';
     document.getElementById('docAbout').value    = doc.about    || '';
     document.getElementById('docRating').value   = doc.rating   || '';
@@ -145,7 +148,7 @@ function cancelDoctorEdit() {
 }
 
 function clearDoctorForm() {
-  ['docName','docPhone','docAddress','docSchedule','docFees','docLocation','docImage','docAbout','docRating']
+  ['docName','docPhone','docAddress','docSchedule','docFees','docLocation','docFacebook','docImage','docAbout','docRating']
     .forEach(id => document.getElementById(id).value = '');
   document.getElementById('docSpecialty').selectedIndex = 0;
 }
@@ -201,6 +204,7 @@ async function savePlace() {
         phone:        document.getElementById('placePhone').value.trim(),
         address:      document.getElementById('placeAddress').value.trim(),
         location:     document.getElementById('placeLocation').value.trim(),
+        facebook:     document.getElementById('placeFacebook').value.trim(),
         workingHours: document.getElementById('placeHours').value.trim(),
         about:        document.getElementById('placeAbout').value.trim(),
         rating:       parseFloat(document.getElementById('placeRating').value) || 0,
@@ -218,6 +222,7 @@ async function savePlace() {
       phone:        document.getElementById('placePhone').value.trim(),
       address:      document.getElementById('placeAddress').value.trim(),
       location:     document.getElementById('placeLocation').value.trim(),
+      facebook:     document.getElementById('placeFacebook').value.trim(),
       workingHours: document.getElementById('placeHours').value.trim(),
       about:        document.getElementById('placeAbout').value.trim(),
       rating:       parseFloat(document.getElementById('placeRating').value) || 0,
@@ -243,6 +248,7 @@ function editPlace(id) {
     document.getElementById('placeAddress').value = place.address      || '';
     document.getElementById('placeHours').value   = place.workingHours || '';
     document.getElementById('placeLocation').value= place.location     || '';
+    document.getElementById('placeFacebook').value= place.facebook     || '';
     document.getElementById('placeImage').value   = place.image        || '';
     document.getElementById('placeAbout').value   = place.about        || '';
     document.getElementById('placeRating').value  = place.rating       || '';
@@ -264,7 +270,7 @@ function cancelPlaceEdit() {
 }
 
 function clearPlaceForm() {
-  ['placeName','placePhone','placeAddress','placeHours','placeLocation','placeImage','placeAbout','placeRating']
+  ['placeName','placePhone','placeAddress','placeHours','placeLocation','placeFacebook','placeImage','placeAbout','placeRating']
     .forEach(id => document.getElementById(id).value = '');
   document.getElementById('placeService').selectedIndex = 0;
 }
