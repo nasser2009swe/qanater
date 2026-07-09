@@ -12,11 +12,14 @@
         { "id": "bones", "name": "عظام", "icon": "🦴" },
         { "id": "children", "name": "أطفال", "icon": "👶" },
         { "id": "skin", "name": "جلدية", "icon": "💆" },
-        { "id": "eye", "name": "عيون", "icon": "👁️" },
+        { "id": "eyes", "name": "عيون", "icon": "👁️" },
         { "id": "ent", "name": "أنف وأذن وحنجرة", "icon": "👂" },
-        { "id": "gynecology", "name": "نساء وتوليد", "icon": "🤰" },
-        { "id": "urology", "name": "مسالك بولية", "icon": "🩺" },
-        { "id": "neurology", "name": "مخ واعصاب", "icon": "🧠" }
+        { "id": "women", "name": "نساء وتوليد", "icon": "🤰" },
+        { "id": "heart", "name": "قلب وأوعية دموية", "icon": "❤️" },
+        { "id": "brain", "name": "مخ وأعصاب ونفسية", "icon": "🧠" },
+        { "id": "speech", "name": "تخاطب وتعديل سلوك", "icon": "🗣️" },
+        { "id": "surgery", "name": "جراحة عامة", "icon": "🔪" },
+        { "id": "general", "name": "تخصصات أخرى", "icon": "🩺" }
       ]
     },
     {
