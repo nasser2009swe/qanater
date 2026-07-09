@@ -26,9 +26,9 @@
 
     <!-- DOCTORS PANEL -->
     <div class="admin-panel active" id="panel-doctors">
-      <div class="admin-card">
+      <div class="admin-card" id="docFormCard">
         <div class="admin-card-header">
-          <span class="admin-card-title">➕ إضافة طبيب جديد</span>
+          <span class="admin-card-title" id="docFormTitle">➕ إضافة طبيب جديد</span>
         </div>
         <div class="alert alert-success" id="docSuccess">✅ تم الحفظ بنجاح</div>
         <div class="alert alert-error" id="docError">❌ خطأ في البيانات</div>
@@ -85,6 +85,7 @@
           <input type="number" class="form-input" id="docRating" placeholder="4.5" min="1" max="5" step="0.1"/>
         </div>
         <button class="btn-primary" id="saveDoctorBtn" onclick="saveDoctor()">💾 حفظ الطبيب</button>
+        <button class="btn-cancel" id="cancelDoctorEdit" onclick="cancelDoctorEdit()" style="display:none;width:100%;margin-top:10px;">✖️ إلغاء التعديل</button>
       </div>
 
       <!-- Doctors List -->
@@ -99,9 +100,9 @@
 
     <!-- PLACES PANEL -->
     <div class="admin-panel" id="panel-places">
-      <div class="admin-card">
+      <div class="admin-card" id="placeFormCard">
         <div class="admin-card-header">
-          <span class="admin-card-title">➕ إضافة مكان جديد</span>
+          <span class="admin-card-title" id="placeFormTitle">➕ إضافة مكان جديد</span>
         </div>
         <div class="alert alert-success" id="placeSuccess">✅ تم الحفظ بنجاح</div>
         <div class="alert alert-error" id="placeError">❌ خطأ في البيانات</div>
@@ -155,6 +156,7 @@
           <input type="number" class="form-input" id="placeRating" placeholder="4.5" min="1" max="5" step="0.1"/>
         </div>
         <button class="btn-primary" id="savePlaceBtn" onclick="savePlace()">💾 حفظ المكان</button>
+        <button class="btn-cancel" id="cancelPlaceEdit" onclick="cancelPlaceEdit()" style="display:none;width:100%;margin-top:10px;">✖️ إلغاء التعديل</button>
       </div>
 
       <!-- Places List -->
