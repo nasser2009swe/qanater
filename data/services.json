@@ -95,6 +95,22 @@
       "subcategories": []
     },
     {
+      "id": "nurseries",
+      "name": "حضانات",
+      "icon": "🎠",
+      "color": "#00BCD4",
+      "description": "حضانات وروضات أطفال بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "travel",
+      "name": "سياحة وسفر",
+      "icon": "✈️",
+      "color": "#009688",
+      "description": "شركات سياحة وسفر بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
       "id": "beauty",
       "name": "صالونات تجميل",
       "icon": "💇",
@@ -108,6 +124,14 @@
       "icon": "📱",
       "color": "#607D8B",
       "description": "محلات إلكترونيات وموبايلات بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
+      "id": "other",
+      "name": "خدمات أخرى",
+      "icon": "🏬",
+      "color": "#9E9E9E",
+      "description": "خدمات متنوعة بالقناطر الخيرية",
       "subcategories": []
     }
   ]

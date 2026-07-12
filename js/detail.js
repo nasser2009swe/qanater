@@ -59,15 +59,19 @@ function renderDoctor(doc) {
   const infoCards = document.getElementById('infoCards');
   [
     { icon: '📍', label: 'العنوان', value: doc.address },
-    { icon: '🕐', label: 'مواعيد الكشف', value: doc.schedule },
+    { icon: '🕐', label: 'مواعيد الكشف', value: doc.schedule || doc.workingHours },
     { icon: '💰', label: 'رسوم الكشف', value: doc.fees },
-    { icon: '📞', label: 'رقم التواصل', value: doc.phone },
+    { icon: '📞', label: 'رقم التواصل', value: (doc.phones && doc.phones.length > 0) ? doc.phones.join(' - ') : doc.phone },
   ].filter(i => i.value).forEach(i => infoCards.appendChild(buildInfoCard(i.icon, i.label, i.value)));
 
   const actions = document.getElementById('actionButtons');
-  if (doc.phone) {
-    actions.innerHTML += `<a href="tel:${doc.phone}" class="action-btn btn-call">📞 اتصال</a>`;
-    actions.innerHTML += `<a href="https://wa.me/2${doc.phone.replace(/^0/,'')}" target="_blank" class="action-btn btn-whatsapp">💬 واتساب</a>`;
+  const phoneList = (doc.phones && doc.phones.length > 0) ? doc.phones : (doc.phone ? [doc.phone.split(' - ')[0]] : []);
+  phoneList.forEach((p, idx) => {
+    const label = phoneList.length > 1 ? `📞 اتصال ${idx + 1}` : '📞 اتصال';
+    actions.innerHTML += `<a href="tel:${p}" class="action-btn btn-call">${label}</a>`;
+  });
+  if (phoneList.length > 0) {
+    actions.innerHTML += `<a href="https://wa.me/2${phoneList[0].replace(/^0/, '')}" target="_blank" class="action-btn btn-whatsapp">💬 واتساب</a>`;
   }
   if (doc.location) {
     actions.innerHTML += `<a href="${doc.location}" target="_blank" class="action-btn btn-location action-btn-wide">📍 الموقع على الخريطة</a>`;
@@ -108,9 +112,13 @@ function renderPlace(place) {
   ].filter(i => i.value).forEach(i => infoCards.appendChild(buildInfoCard(i.icon, i.label, i.value)));
 
   const actions = document.getElementById('actionButtons');
-  if (place.phone) {
-    actions.innerHTML += `<a href="tel:${place.phone}" class="action-btn btn-call">📞 اتصال</a>`;
-    actions.innerHTML += `<a href="https://wa.me/2${place.phone.replace(/^0/,'')}" target="_blank" class="action-btn btn-whatsapp">💬 واتساب</a>`;
+  const placePhones = (place.phones && place.phones.length > 0) ? place.phones : (place.phone ? [place.phone.split(' - ')[0]] : []);
+  placePhones.forEach((p, idx) => {
+    const label = placePhones.length > 1 ? `📞 اتصال ${idx + 1}` : '📞 اتصال';
+    actions.innerHTML += `<a href="tel:${p}" class="action-btn btn-call">${label}</a>`;
+  });
+  if (placePhones.length > 0) {
+    actions.innerHTML += `<a href="https://wa.me/2${placePhones[0].replace(/^0/, '')}" target="_blank" class="action-btn btn-whatsapp">💬 واتساب</a>`;
   }
   if (place.location) {
     actions.innerHTML += `<a href="${place.location}" target="_blank" class="action-btn btn-location action-btn-wide">📍 الموقع على الخريطة</a>`;
