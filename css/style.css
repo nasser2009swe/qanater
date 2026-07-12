@@ -672,3 +672,65 @@ body {
 }
 body.dark-mode #darkModeBtn { background: var(--bg); border: 1px solid var(--text-mid); }
 
+/* ===== PWA BANNER ===== */
+.pwa-banner {
+  position: fixed;
+  bottom: calc(80px + var(--safe-bottom) + 60px);
+  left: 16px;
+  right: 16px;
+  background: var(--card-bg);
+  padding: 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+  transform: translateY(150%);
+  transition: var(--transition);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+body.dark-mode .pwa-banner {
+  border-color: rgba(255,255,255,0.1);
+}
+.pwa-banner.show {
+  transform: translateY(0);
+}
+.pwa-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pwa-icon {
+  font-size: 2rem;
+}
+.pwa-text h4 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.pwa-text p {
+  font-size: 0.8rem;
+  color: var(--text-mid);
+}
+.pwa-actions {
+  display: flex;
+  gap: 8px;
+}
+.pwa-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+.pwa-close {
+  background: transparent;
+  color: var(--text-light);
+  border: none;
+  font-size: 1.2rem;
+  padding: 8px;
+  cursor: pointer;
+}
