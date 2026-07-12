@@ -65,46 +65,41 @@ async function saveDoctor() {
   const specialty = document.getElementById('docSpecialty').value;
   if (!name) { showAlert('docError'); return; }
 
+  // Parse phones: split by comma or dash, clean up
+  const phoneRaw = document.getElementById('docPhone').value.trim();
+  const phones = phoneRaw ? phoneRaw.split(/[,،\-]+/).map(p => p.trim()).filter(p => p) : [];
+  const whatsappIndex = parseInt(document.getElementById('docWhatsappIndex').value) || 0;
+
   const data = await loadData();
   data.doctors = data.doctors || [];
 
+  const docData = {
+    name, specialty,
+    phones,
+    phone: phones.join(' - '),
+    whatsappIndex,
+    image:    document.getElementById('docImage').value.trim(),
+    address:  document.getElementById('docAddress').value.trim(),
+    location: document.getElementById('docLocation').value.trim(),
+    facebook: document.getElementById('docFacebook').value.trim(),
+    schedule: document.getElementById('docSchedule').value.trim(),
+    fees:     document.getElementById('docFees').value.trim(),
+    about:    document.getElementById('docAbout').value.trim(),
+    rating:   parseFloat(document.getElementById('docRating').value) || 0,
+    serviceId: 'clinics',
+  };
+
   if (editingDoctorId) {
-    // UPDATE existing
     const idx = data.doctors.findIndex(d => d.id === editingDoctorId);
     if (idx !== -1) {
-      data.doctors[idx] = {
-        ...data.doctors[idx],
-        name, specialty,
-        image:    document.getElementById('docImage').value.trim(),
-        phone:    document.getElementById('docPhone').value.trim(),
-        address:  document.getElementById('docAddress').value.trim(),
-        location: document.getElementById('docLocation').value.trim(),
-        facebook: document.getElementById('docFacebook').value.trim(),
-        schedule: document.getElementById('docSchedule').value.trim(),
-        fees:     document.getElementById('docFees').value.trim(),
-        about:    document.getElementById('docAbout').value.trim(),
-        rating:   parseFloat(document.getElementById('docRating').value) || 0,
-      };
+      data.doctors[idx] = { ...data.doctors[idx], ...docData };
     }
     editingDoctorId = null;
-    document.getElementById('saveDoctorBtn').textContent = '💾 حفظ الطبيب';
-    document.getElementById('docFormTitle').textContent  = '➕ إضافة طبيب جديد';
+    document.getElementById('saveDoctorBtn').textContent = '\u{1F4BE} \u062D\u0641\u0638 \u0627\u0644\u0637\u0628\u064A\u0628';
+    document.getElementById('docFormTitle').textContent  = '\u{2795} \u0625\u0636\u0627\u0641\u0629 \u0637\u0628\u064A\u0628 \u062C\u062F\u064A\u062F';
     document.getElementById('cancelDoctorEdit').style.display = 'none';
   } else {
-    // ADD new
-    data.doctors.push({
-      id: genId('d'), name, specialty, serviceId: 'clinics',
-      image:    document.getElementById('docImage').value.trim(),
-      phone:    document.getElementById('docPhone').value.trim(),
-      address:  document.getElementById('docAddress').value.trim(),
-      location: document.getElementById('docLocation').value.trim(),
-      facebook: document.getElementById('docFacebook').value.trim(),
-      schedule: document.getElementById('docSchedule').value.trim(),
-      fees:     document.getElementById('docFees').value.trim(),
-      about:    document.getElementById('docAbout').value.trim(),
-      rating:   parseFloat(document.getElementById('docRating').value) || 0,
-      reviews:  0
-    });
+    data.doctors.push({ id: genId('d'), reviews: 0, ...docData });
   }
 
   saveData(data);
@@ -121,7 +116,10 @@ function editDoctor(id) {
     editingDoctorId = id;
     document.getElementById('docName').value     = doc.name     || '';
     document.getElementById('docSpecialty').value= doc.specialty|| 'internal';
-    document.getElementById('docPhone').value    = doc.phone    || '';
+    // Show phones joined by comma for editing
+    const phonesDisplay = doc.phones && doc.phones.length > 0 ? doc.phones.join(', ') : (doc.phone || '');
+    document.getElementById('docPhone').value    = phonesDisplay;
+    document.getElementById('docWhatsappIndex').value = doc.whatsappIndex || 0;
     document.getElementById('docAddress').value  = doc.address  || '';
     document.getElementById('docSchedule').value = doc.schedule || '';
     document.getElementById('docFees').value     = doc.fees     || '';
@@ -131,8 +129,8 @@ function editDoctor(id) {
     document.getElementById('docAbout').value    = doc.about    || '';
     document.getElementById('docRating').value   = doc.rating   || '';
 
-    document.getElementById('saveDoctorBtn').textContent = '✏️ حفظ التعديل';
-    document.getElementById('docFormTitle').textContent  = '✏️ تعديل بيانات الطبيب';
+    document.getElementById('saveDoctorBtn').textContent = '\u270F\uFE0F \u062D\u0641\u0638 \u0627\u0644\u062A\u0639\u062F\u064A\u0644';
+    document.getElementById('docFormTitle').textContent  = '\u270F\uFE0F \u062A\u0639\u062F\u064A\u0644 \u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u0637\u0628\u064A\u0628';
     document.getElementById('cancelDoctorEdit').style.display = 'block';
 
     scrollToForm('docFormCard');
@@ -151,6 +149,7 @@ function clearDoctorForm() {
   ['docName','docPhone','docAddress','docSchedule','docFees','docLocation','docFacebook','docImage','docAbout','docRating']
     .forEach(id => document.getElementById(id).value = '');
   document.getElementById('docSpecialty').selectedIndex = 0;
+  document.getElementById('docWhatsappIndex').selectedIndex = 0;
 }
 
 async function deleteDoctor(id) {

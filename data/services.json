@@ -19,6 +19,7 @@
         { "id": "brain", "name": "مخ وأعصاب ونفسية", "icon": "🧠" },
         { "id": "speech", "name": "تخاطب وتعديل سلوك", "icon": "🗣️" },
         { "id": "surgery", "name": "جراحة عامة", "icon": "🔪" },
+        { "id": "physio", "name": "علاج طبيعي", "icon": "🏃‍♂️" },
         { "id": "general", "name": "تخصصات أخرى", "icon": "🩺" }
       ]
     },

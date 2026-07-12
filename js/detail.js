@@ -65,13 +65,15 @@ function renderDoctor(doc) {
   ].filter(i => i.value).forEach(i => infoCards.appendChild(buildInfoCard(i.icon, i.label, i.value)));
 
   const actions = document.getElementById('actionButtons');
-  const phoneList = (doc.phones && doc.phones.length > 0) ? doc.phones : (doc.phone ? [doc.phone.split(' - ')[0]] : []);
+  const phoneList = (doc.phones && doc.phones.length > 0) ? doc.phones : (doc.phone ? doc.phone.split(' - ') : []);
+  const waIndex = Math.min(doc.whatsappIndex || 0, phoneList.length - 1);
   phoneList.forEach((p, idx) => {
     const label = phoneList.length > 1 ? `📞 اتصال ${idx + 1}` : '📞 اتصال';
     actions.innerHTML += `<a href="tel:${p}" class="action-btn btn-call">${label}</a>`;
   });
   if (phoneList.length > 0) {
-    actions.innerHTML += `<a href="https://wa.me/2${phoneList[0].replace(/^0/, '')}" target="_blank" class="action-btn btn-whatsapp">💬 واتساب</a>`;
+    const waPhone = phoneList[waIndex] || phoneList[0];
+    actions.innerHTML += `<a href="https://wa.me/2${waPhone.replace(/^0/, '')}" target="_blank" class="action-btn btn-whatsapp">💬 واتساب</a>`;
   }
   if (doc.location) {
     actions.innerHTML += `<a href="${doc.location}" target="_blank" class="action-btn btn-location action-btn-wide">📍 الموقع على الخريطة</a>`;
@@ -112,13 +114,15 @@ function renderPlace(place) {
   ].filter(i => i.value).forEach(i => infoCards.appendChild(buildInfoCard(i.icon, i.label, i.value)));
 
   const actions = document.getElementById('actionButtons');
-  const placePhones = (place.phones && place.phones.length > 0) ? place.phones : (place.phone ? [place.phone.split(' - ')[0]] : []);
+  const placePhones = (place.phones && place.phones.length > 0) ? place.phones : (place.phone ? place.phone.split(' - ') : []);
+  const waIdxPlace = Math.min(place.whatsappIndex || 0, placePhones.length - 1);
   placePhones.forEach((p, idx) => {
     const label = placePhones.length > 1 ? `📞 اتصال ${idx + 1}` : '📞 اتصال';
     actions.innerHTML += `<a href="tel:${p}" class="action-btn btn-call">${label}</a>`;
   });
   if (placePhones.length > 0) {
-    actions.innerHTML += `<a href="https://wa.me/2${placePhones[0].replace(/^0/, '')}" target="_blank" class="action-btn btn-whatsapp">💬 واتساب</a>`;
+    const waPhone = placePhones[waIdxPlace] || placePhones[0];
+    actions.innerHTML += `<a href="https://wa.me/2${waPhone.replace(/^0/, '')}" target="_blank" class="action-btn btn-whatsapp">💬 واتساب</a>`;
   }
   if (place.location) {
     actions.innerHTML += `<a href="${place.location}" target="_blank" class="action-btn btn-location action-btn-wide">📍 الموقع على الخريطة</a>`;
