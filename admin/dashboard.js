@@ -483,6 +483,98 @@ function exportAds() {
   URL.revokeObjectURL(url);
 }
 
+// ===== REQUESTS =====
+function renderRequestsList() {
+  const reqList = document.getElementById('requestsList');
+  const countEl = document.getElementById('requestsCount');
+  let pending = [];
+  try {
+    const stored = localStorage.getItem('qanater_pending_requests');
+    if (stored) pending = JSON.parse(stored);
+  } catch(e) {}
+
+  if (!reqList) return;
+  countEl.textContent = `(${pending.length})`;
+  if (pending.length === 0) {
+    reqList.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.5);">لا توجد طلبات معلقة</div>';
+    return;
+  }
+
+  reqList.innerHTML = pending.map((req, index) => {
+    const isDoc = req.type === 'doctor';
+    const typeLabel = isDoc ? '👨‍⚕️ طبيب' : '🏪 مكان';
+    const specLabel = isDoc ? (specialtyLabels[req.specialty] || req.specialty) : (serviceLabels[req.serviceId] || req.serviceId);
+    return `
+      <div class="admin-item">
+        <div class="admin-item-info">
+          <div class="admin-item-name">${req.name} <small style="color:var(--accent);">(${typeLabel} - ${specLabel})</small></div>
+          <div class="admin-item-sub">📞 ${req.phone} | 📍 ${req.address || 'بدون عنوان'}</div>
+          ${req.about ? `<div style="font-size:0.8rem;color:#ccc;margin-top:4px;">${req.about}</div>` : ''}
+          <div style="font-size:0.75rem;color:var(--text-light);margin-top:4px;">تاريخ الطلب: ${req.date}</div>
+        </div>
+        <div class="admin-item-actions">
+          <button class="btn-primary" onclick="approveRequest(${index})" style="padding:6px 12px;font-size:0.8rem;">✔️ قبول</button>
+          <button class="btn-cancel" onclick="rejectRequest(${index})" style="padding:6px 12px;font-size:0.8rem;">❌ رفض</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function approveRequest(index) {
+  let pending = [];
+  try { pending = JSON.parse(localStorage.getItem('qanater_pending_requests')); } catch(e) {}
+  const req = pending[index];
+  if (!req) return;
+
+  const data = await loadData();
+  data.doctors = data.doctors || [];
+  data.places = data.places || [];
+
+  const newItem = {
+    id: req.type === 'doctor' ? genId('d') : genId('p'),
+    name: req.name,
+    serviceId: req.serviceId,
+    specialty: req.specialty,
+    phone: req.phone,
+    phones: req.phones,
+    address: req.address,
+    schedule: req.schedule,
+    workingHours: req.workingHours,
+    about: req.about,
+    rating: 5,
+    reviews: 0,
+    image: '',
+    location: '',
+    facebook: '',
+    whatsappIndex: 0
+  };
+
+  if (req.type === 'doctor') {
+    data.doctors.push(newItem);
+  } else {
+    data.places.push(newItem);
+  }
+
+  saveData(data);
+  pending.splice(index, 1);
+  localStorage.setItem('qanater_pending_requests', JSON.stringify(pending));
+  
+  renderRequestsList();
+  renderDoctorsList(data);
+  renderPlacesList(data);
+  alert('تم إضافة الطلب بنجاح إلى قاعدة البيانات!');
+}
+
+function rejectRequest(index) {
+  if (!confirm('هل أنت متأكد من رفض هذا الطلب وحذفه؟')) return;
+  let pending = [];
+  try { pending = JSON.parse(localStorage.getItem('qanater_pending_requests')); } catch(e) {}
+  pending.splice(index, 1);
+  localStorage.setItem('qanater_pending_requests', JSON.stringify(pending));
+  renderRequestsList();
+}
+
 // ===== LOGOUT =====
 function logout() {
   sessionStorage.removeItem('adminAuth');
@@ -495,6 +587,7 @@ async function init() {
   renderDoctorsList(data);
   renderPlacesList(data);
   renderAdsList(ads);
+  renderRequestsList();
 }
 
 init();

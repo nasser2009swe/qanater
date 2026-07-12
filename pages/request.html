@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>تقديم طلب إضافة - القناطر الخيرية</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="manifest" href="../manifest.json"/>
+  <style>
+    .request-container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .request-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .request-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .request-header h2 {
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .request-header p {
+      color: var(--text-mid);
+      font-size: 0.9rem;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 0.9rem;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text-dark);
+    }
+    body.dark-mode .form-input, body.dark-mode .form-select, body.dark-mode .form-textarea {
+      border-color: rgba(255,255,255,0.1);
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      font-size: 1.1rem;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 10px;
+    }
+    .btn-submit:hover {
+      opacity: 0.9;
+    }
+    .alert-success {
+      background: #E8F5E9;
+      color: #2E7D32;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      text-align: center;
+      display: none;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+    body.dark-mode .alert-success {
+      background: rgba(46, 125, 50, 0.2);
+    }
+  </script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content" style="text-align: center;">
+      <h1 style="color:white; font-size:1.5rem;">القناطر الخيرية</h1>
+    </div>
+  </header>
+
+  <main class="request-container fade-in">
+    <div class="request-card">
+      <div class="request-header">
+        <h2>📝 طلب إضافة خدمة جديدة</h2>
+        <p>قم بملء البيانات وسيتم مراجعتها من قبل الإدارة قبل إضافتها للموقع.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">نوع الخدمة *</label>
+        <select class="form-select" id="reqType" onchange="updateSpecialty()">
+          <option value="place">مكان (مطعم، صيدلية، الخ)</option>
+          <option value="doctor">طبيب / عيادة</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">الاسم *</label>
+        <input type="text" class="form-input" id="reqName" placeholder="اسم المكان أو الطبيب"/>
+      </div>
+
+      <div class="form-group" id="specialtyGroup" style="display:none;">
+        <label class="form-label">التخصص *</label>
+        <select class="form-select" id="reqSpecialty">
+          <option value="internal">طب باطني</option>
+          <option value="dental">أسنان</option>
+          <option value="bones">عظام</option>
+          <option value="children">أطفال</option>
+          <option value="skin">جلدية</option>
+          <option value="eyes">عيون</option>
+          <option value="ent">أنف وأذن وحنجرة</option>
+          <option value="women">نساء وتوليد</option>
+          <option value="heart">قلب وأوعية دموية</option>
+          <option value="brain">مخ وأعصاب ونفسية</option>
+          <option value="speech">تخاطب وتعديل سلوك</option>
+          <option value="surgery">جراحة عامة</option>
+          <option value="physio">علاج طبيعي</option>
+          <option value="general">تخصصات أخرى</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="serviceIdGroup">
+        <label class="form-label">التصنيف *</label>
+        <select class="form-select" id="reqServiceId">
+          <option value="restaurants">مطعم</option>
+          <option value="pharmacies">صيدلية</option>
+          <option value="labs">معمل تحاليل</option>
+          <option value="radiology">مركز أشعة</option>
+          <option value="cafes">كافيه</option>
+          <option value="gyms">جيم ورياضة</option>
+          <option value="nurseries">حضانات</option>
+          <option value="schools">مدارس</option>
+          <option value="beauty">صالون تجميل</option>
+          <option value="travel">سياحة وسفر</option>
+          <option value="electronics">إلكترونيات</option>
+          <option value="other">أخرى</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">أرقام التواصل *</label>
+        <input type="text" class="form-input" id="reqPhone" placeholder="مثال: 01012345678"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">العنوان</label>
+        <input type="text" class="form-input" id="reqAddress" placeholder="المنطقة، الشارع..."/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">ساعات العمل / المواعيد</label>
+        <input type="text" class="form-input" id="reqSchedule" placeholder="من 10 ص إلى 10 م"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">نبذة أو تفاصيل إضافية</label>
+        <textarea class="form-textarea" id="reqAbout" placeholder="معلومات عن الخدمة..."></textarea>
+      </div>
+
+      <button class="btn-submit" onclick="submitRequest()">إرسال الطلب للمراجعة</button>
+
+      <div id="successMsg" class="alert-success">
+        ✅ تم إرسال طلبك بنجاح! سيتم مراجعته وإضافته قريباً.
+      </div>
+      
+      <div style="text-align:center; margin-top: 20px;">
+        <a href="../index.html" style="color:var(--primary); text-decoration:none; font-weight:bold;">← العودة للصفحة الرئيسية</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/ui.js"></script>
+  <script>
+    function updateSpecialty() {
+      const type = document.getElementById('reqType').value;
+      if (type === 'doctor') {
+        document.getElementById('specialtyGroup').style.display = 'block';
+        document.getElementById('serviceIdGroup').style.display = 'none';
+      } else {
+        document.getElementById('specialtyGroup').style.display = 'none';
+        document.getElementById('serviceIdGroup').style.display = 'block';
+      }
+    }
+
+    function submitRequest() {
+      const type = document.getElementById('reqType').value;
+      const name = document.getElementById('reqName').value.trim();
+      const phone = document.getElementById('reqPhone').value.trim();
+      
+      if (!name || !phone) {
+        alert('الرجاء إدخال الاسم ورقم التواصل');
+        return;
+      }
+
+      const requestObj = {
+        id: 'req_' + Date.now(),
+        type: type,
+        name: name,
+        specialty: type === 'doctor' ? document.getElementById('reqSpecialty').value : null,
+        serviceId: type === 'place' ? document.getElementById('reqServiceId').value : 'clinics',
+        phone: phone,
+        phones: phone.split(/[,،\-]+/).map(p => p.trim()).filter(p => p),
+        address: document.getElementById('reqAddress').value.trim(),
+        schedule: document.getElementById('reqSchedule').value.trim(),
+        workingHours: document.getElementById('reqSchedule').value.trim(),
+        about: document.getElementById('reqAbout').value.trim(),
+        date: new Date().toLocaleDateString('ar-EG')
+      };
+
+      // Save to localStorage pending array
+      let pending = [];
+      try {
+        const stored = localStorage.getItem('qanater_pending_requests');
+        if (stored) pending = JSON.parse(stored);
+      } catch(e) {}
+      
+      pending.push(requestObj);
+      localStorage.setItem('qanater_pending_requests', JSON.stringify(pending));
+
+      // Show success
+      document.getElementById('successMsg').style.display = 'block';
+      setTimeout(() => {
+        window.location.href = '../index.html';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
