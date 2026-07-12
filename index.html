@@ -3,36 +3,54 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+
   <meta name="description" content="دليل خدمات مدينة القناطر الخيرية - أطباء، عيادات، صيدليات، مطاعم، وكافيهات"/>
+
+  <!-- Open Graph -->
   <meta property="og:title" content="القناطر الخيرية - دليل الخدمات"/>
   <meta property="og:description" content="دليل خدمات مدينة القناطر الخيرية - عيادات، صيدليات، مطاعم، وأكثر"/>
   <meta property="og:image" content="https://nasser2009swe.github.io/qanater/css/file_00000000cb8871f489ffe8ab74737f16.png"/>
   <meta property="og:image:width" content="1200"/>
-<meta property="og:image:height" content="630"/>
-   <meta property="og:url" content="https://nasser2009swe.github.io/qanater/"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:image:type" content="image/png"/>
+  <meta property="og:url" content="https://nasser2009swe.github.io/qanater/"/>
   <meta property="og:type" content="website"/>
+  <meta property="og:locale" content="ar_AR"/>
+
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="القناطر الخيرية - دليل الخدمات"/>
+  <meta name="twitter:description" content="دليل خدمات مدينة القناطر الخيرية - عيادات، صيدليات، مطاعم، وأكثر"/>
+  <meta name="twitter:image" content="https://nasser2009swe.github.io/qanater/css/file_00000000cb8871f489ffe8ab74737f16.png"/>
+
   <meta name="theme-color" content="#1B4F72"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="قناطر"/>
+
   <link rel="manifest" href="manifest.json"/>
   <title>القناطر الخيرية - دليل الخدمات</title>
+
   <link rel="stylesheet" href="css/style.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
 </head>
+
 <body>
+
   <!-- Header -->
   <header class="header">
     <div class="header-content">
       <div class="header-top">
         <a href="admin/login.html" class="admin-btn" title="لوحة التحكم">⚙️</a>
+
         <div class="header-title">
           <h1>القناطر الخيرية</h1>
           <p>دليلك الشامل لخدمات المدينة</p>
         </div>
+
         <div class="header-icon">🌊</div>
       </div>
+
       <div class="search-box">
         <input type="search" id="searchInput" placeholder="ابحث عن خدمة أو اسم..." autocomplete="off"/>
       </div>
@@ -45,13 +63,16 @@
       <span class="section-dot"></span>
       <h2 id="homeSectionTitle">الخدمات المتاحة</h2>
     </div>
+
     <div class="services-grid" id="servicesGrid">
-      <div class="service-card skeleton" style="height: 120px;"></div>
-      <div class="service-card skeleton" style="height: 120px;"></div>
-      <div class="service-card skeleton" style="height: 120px;"></div>
-      <div class="service-card skeleton" style="height: 120px;"></div>
+      <div class="service-card skeleton" style="height:120px;"></div>
+      <div class="service-card skeleton" style="height:120px;"></div>
+      <div class="service-card skeleton" style="height:120px;"></div>
+      <div class="service-card skeleton" style="height:120px;"></div>
     </div>
+
     <div class="listings-grid hidden" id="searchResultsGrid"></div>
+
     <div class="no-results hidden" id="noResults">
       <div class="no-results-icon">🔍</div>
       <p>لا توجد نتائج مطابقة</p>
@@ -64,56 +85,70 @@
       <span class="nav-icon">🏠</span>
       <span>الرئيسية</span>
     </a>
+
     <a href="pages/service.html?id=clinics" class="nav-btn">
       <span class="nav-icon">🏥</span>
       <span>عيادات</span>
     </a>
+
     <a href="pages/service.html?id=restaurants" class="nav-btn">
       <span class="nav-icon">🍽️</span>
       <span>مطاعم</span>
     </a>
+
     <a href="pages/service.html?id=pharmacies" class="nav-btn">
       <span class="nav-icon">💊</span>
       <span>صيدليات</span>
     </a>
+
     <a href="admin/login.html" class="nav-btn">
       <span class="nav-icon">⚙️</span>
       <span>إدارة</span>
     </a>
   </nav>
 
-  <!-- Ad Popup Overlay -->
+  <!-- Ad Popup -->
   <div id="adOverlay" class="ad-overlay">
     <div id="adModal" class="ad-modal">
+
       <button class="ad-close" onclick="closeAd()">✕</button>
+
       <div id="adImage" class="ad-image-wrap" style="display:none">
         <img alt=""/>
       </div>
+
       <div class="ad-body">
         <h2 id="adTitle" class="ad-title"></h2>
         <p id="adDesc" class="ad-desc"></p>
       </div>
+
       <div id="adDots" class="ad-dots"></div>
+
       <div id="adNav" class="ad-nav" style="display:none">
         <button id="adPrev" class="ad-nav-btn">‹</button>
         <button id="adNext" class="ad-nav-btn">›</button>
       </div>
+
       <a id="adLink" href="#" class="ad-link-btn" style="display:none" target="_blank"></a>
+
       <button class="ad-dismiss" onclick="closeAd()">متابعة الموقع</button>
+
     </div>
   </div>
 
   <script src="js/app.js"></script>
   <script src="js/ads.js"></script>
   <script src="js/ui.js"></script>
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/qanater/sw.js').then(reg => {
-          console.log('SW registered!', reg);
-        }).catch(err => console.log('SW registration failed', err));
+        navigator.serviceWorker.register('/qanater/sw.js')
+          .then(reg => console.log('SW registered!', reg))
+          .catch(err => console.log('SW registration failed', err));
       });
     }
   </script>
+
 </body>
 </html>
