@@ -95,6 +95,7 @@ function starBar(rating) {
 }
 
 function renderDoctors(doctors, grid) {
+  grid.innerHTML = '';
   doctors.forEach(doc => {
     const card = document.createElement('a');
     card.className = 'listing-card fade-in';
@@ -119,6 +120,7 @@ function renderDoctors(doctors, grid) {
 }
 
 function renderPlaces(places, grid) {
+  grid.innerHTML = '';
   places.forEach(p => {
     const card = document.createElement('a');
     card.className = 'listing-card fade-in';
