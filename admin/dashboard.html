@@ -21,7 +21,6 @@
       <button class="admin-tab active" onclick="switchTab('doctors', this)">👨‍⚕️ الأطباء</button>
       <button class="admin-tab" onclick="switchTab('places', this)">🏪 الأماكن</button>
       <button class="admin-tab" onclick="switchTab('ads', this)">📢 الإعلانات</button>
-      <button class="admin-tab" onclick="switchTab('requests', this)">📝 الطلبات</button>
       <button class="admin-tab" onclick="switchTab('export', this)">📥 تصدير</button>
       <button class="admin-tab" onclick="switchTab('settings', this)">🔐 الإعدادات</button>
     </div>
@@ -274,18 +273,7 @@
       </div>
     </div>
 
-    <!-- REQUESTS PANEL -->
-    <div class="admin-panel" id="panel-requests">
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <span class="admin-card-title">📝 الطلبات المعلقة</span>
-          <span id="requestsCount" style="color:rgba(255,255,255,0.5);font-size:0.8rem;"></span>
-        </div>
-        <div class="admin-list" id="requestsList">
-          <!-- Pending requests will be injected here -->
-        </div>
-      </div>
-    </div>
+
 
     <!-- EXPORT PANEL -->
     <div class="admin-panel" id="panel-export">

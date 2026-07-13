@@ -209,36 +209,41 @@
         return;
       }
 
-      const requestObj = {
-        id: 'req_' + Date.now(),
-        type: type,
-        name: name,
-        specialty: type === 'doctor' ? document.getElementById('reqSpecialty').value : null,
-        serviceId: type === 'place' ? document.getElementById('reqServiceId').value : 'clinics',
-        phone: phone,
-        phones: phone.split(/[,،\-]+/).map(p => p.trim()).filter(p => p),
-        address: document.getElementById('reqAddress').value.trim(),
-        schedule: document.getElementById('reqSchedule').value.trim(),
-        workingHours: document.getElementById('reqSchedule').value.trim(),
-        about: document.getElementById('reqAbout').value.trim(),
-        date: new Date().toLocaleDateString('ar-EG')
-      };
-
-      // Save to localStorage pending array
-      let pending = [];
-      try {
-        const stored = localStorage.getItem('qanater_pending_requests');
-        if (stored) pending = JSON.parse(stored);
-      } catch(e) {}
+      const isDoctor = type === 'doctor';
+      const typeLabel = isDoctor ? 'طبيب/عيادة' : 'مكان (خدمة)';
       
-      pending.push(requestObj);
-      localStorage.setItem('qanater_pending_requests', JSON.stringify(pending));
+      const specialtySelect = document.getElementById('reqSpecialty');
+      const serviceSelect = document.getElementById('reqServiceId');
+      
+      const categoryLabel = isDoctor 
+        ? specialtySelect.options[specialtySelect.selectedIndex].text
+        : serviceSelect.options[serviceSelect.selectedIndex].text;
 
-      // Show success
+      const address = document.getElementById('reqAddress').value.trim();
+      const schedule = document.getElementById('reqSchedule').value.trim();
+      const about = document.getElementById('reqAbout').value.trim();
+
+      // Format WhatsApp message
+      let msg = `*طلب إضافة خدمة جديدة لموقع القناطر* 🚀\n\n`;
+      msg += `*نوع الخدمة:* ${typeLabel}\n`;
+      msg += `*الاسم:* ${name}\n`;
+      msg += `*التصنيف:* ${categoryLabel}\n`;
+      msg += `*أرقام التواصل:* ${phone}\n`;
+      if (address) msg += `*العنوان:* ${address}\n`;
+      if (schedule) msg += `*المواعيد:* ${schedule}\n`;
+      if (about) msg += `*تفاصيل إضافية:* ${about}\n`;
+
+      const encodedMsg = encodeURIComponent(msg);
+      const adminPhone = "201222462607"; // Admin WhatsApp number
+
+      // Show success briefly
       document.getElementById('successMsg').style.display = 'block';
+      
+      // Redirect to WhatsApp
       setTimeout(() => {
+        window.open(`https://wa.me/${adminPhone}?text=${encodedMsg}`, '_blank');
         window.location.href = '../index.html';
-      }, 3000);
+      }, 1500);
     }
   </script>
 </body>
