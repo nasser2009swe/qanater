@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qanater-v1';
+const CACHE_NAME = 'qanater-v0';
 const ASSETS_TO_CACHE = [
   '/qanater/',
   '/qanater/index.html',
@@ -35,7 +35,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   // Stale-while-revalidate strategy for data files, Cache First for others
   const isDataFile = event.request.url.includes('.json');
-  
+
   if (isDataFile) {
     event.respondWith(
       caches.open(CACHE_NAME).then(cache => {
