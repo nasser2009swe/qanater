@@ -129,6 +129,14 @@
       "subcategories": []
     },
     {
+      "id": "clothing",
+      "name": "محلات ملابس",
+      "icon": "👕",
+      "color": "#E91E63",
+      "description": "محلات ملابس وأحذية بالقناطر الخيرية",
+      "subcategories": []
+    },
+    {
       "id": "other",
       "name": "خدمات أخرى",
       "icon": "🏬",

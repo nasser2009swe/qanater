@@ -22,7 +22,7 @@ const serviceLabels = {
   restaurants:'مطعم', cafes:'كافيه', bakeries:'مخبز/حلواني',
   schools:'مدرسة', supermarkets:'سوبر ماركت', gyms:'جيم',
   beauty:'صالون تجميل', electronics:'إلكترونيات',
-  nurseries: 'حضانات', travel: 'سياحة وسفر', other: 'أخرى'
+  nurseries: 'حضانات', travel: 'سياحة وسفر', clothing: 'محلات ملابس', other: 'أخرى'
 };
 
 async function loadData() {
