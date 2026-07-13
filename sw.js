@@ -1,15 +1,15 @@
 const CACHE_NAME = 'qanater-v0';
 const ASSETS_TO_CACHE = [
-  '/qanater/',
-  '/qanater/index.html',
-  '/qanater/css/style.css',
-  '/qanater/js/app.js',
-  '/qanater/js/ads.js',
-  '/qanater/manifest.json',
-  '/qanater/data/services.json',
-  '/qanater/data/listings.json',
-  '/qanater/data/ads.json',
-  '/qanater/pages/service.html'
+  './',
+  './index.html',
+  './css/style.css',
+  './js/app.js',
+  './js/ads.js',
+  './manifest.json',
+  './data/services.json',
+  './data/listings.json',
+  './data/ads.json',
+  './pages/service.html'
 ];
 
 self.addEventListener('install', event => {
