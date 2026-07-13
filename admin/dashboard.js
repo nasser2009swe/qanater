@@ -21,7 +21,8 @@ const serviceLabels = {
   pharmacies:'صيدلية', labs:'معمل تحاليل', radiology:'مركز أشعة',
   restaurants:'مطعم', cafes:'كافيه', bakeries:'مخبز/حلواني',
   schools:'مدرسة', supermarkets:'سوبر ماركت', gyms:'جيم',
-  beauty:'صالون تجميل', electronics:'إلكترونيات'
+  beauty:'صالون تجميل', electronics:'إلكترونيات',
+  nurseries: 'حضانات', travel: 'سياحة وسفر', other: 'أخرى'
 };
 
 async function loadData() {
