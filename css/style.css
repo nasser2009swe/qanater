@@ -227,6 +227,49 @@ body {
 .sub-icon { font-size: 1.6rem; flex-shrink: 0; }
 .sub-name { font-size: 0.88rem; font-weight: 700; }
 
+/* ===== CHIPS FILTER ===== */
+.chips-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 0 16px 16px;
+  margin: 0 -16px 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.chips-container::-webkit-scrollbar {
+  display: none;
+}
+.chip {
+  background: var(--card-bg);
+  color: var(--text-mid);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+.chip.active {
+  background: var(--primary);
+  color: #fff;
+}
+body.dark-mode .chip {
+  background: var(--card-bg);
+  color: var(--text-dark);
+}
+body.dark-mode .chip.active {
+  background: var(--primary);
+  color: #fff;
+}
+
 /* ===== LISTINGS ===== */
 .listings-grid { display: flex; flex-direction: column; gap: 10px; }
 

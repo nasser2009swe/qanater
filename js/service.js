@@ -44,47 +44,72 @@ async function initService() {
   document.getElementById('pageIcon').textContent = service.icon;
   document.title = `القناطر الخيرية - ${subName || service.name}`;
 
-  // Subcategories section
-  const subSection = document.getElementById('subcategoriesSection');
-  const subGrid = document.getElementById('subcategoriesGrid');
-
-  if (!subcat && service.subcategories && service.subcategories.length > 0) {
-    subSection.classList.remove('hidden');
-    service.subcategories.forEach(sub => {
-      const card = document.createElement('a');
-      card.className = 'sub-card fade-in';
-      card.href = `service.html?id=${serviceId}&sub=${sub.id}`;
-      card.innerHTML = `<span class="sub-icon">${sub.icon}</span><span class="sub-name">${sub.name}</span>`;
-      subGrid.appendChild(card);
-    });
-  }
-
-  // Listings
+  // Chips section
+  const chipsSection = document.getElementById('chipsSection');
+  const chipsContainer = document.getElementById('chipsContainer');
   const listingsGrid = document.getElementById('listingsGrid');
   const listingsTitle = document.getElementById('listingsTitle');
   const emptyState = document.getElementById('emptyState');
 
-  let items = [];
+  let currentDocs = [];
+  let currentSubcat = subcat || 'all';
 
-  if (serviceId === 'clinics') {
+  if (service.subcategories && service.subcategories.length > 0) {
+    chipsSection.classList.remove('hidden');
+    
+    // Add "All" chip
+    const allChip = document.createElement('div');
+    allChip.className = `chip ${currentSubcat === 'all' ? 'active' : ''}`;
+    allChip.innerHTML = `<span class="chip-icon">${service.icon}</span> الكل`;
+    allChip.onclick = () => filterDoctors('all', 'جميع الأطباء', allChip);
+    chipsContainer.appendChild(allChip);
+
+    // Add subcategories chips
+    service.subcategories.forEach(sub => {
+      const chip = document.createElement('div');
+      chip.className = `chip ${currentSubcat === sub.id ? 'active' : ''}`;
+      chip.innerHTML = `<span class="chip-icon">${sub.icon}</span> ${sub.name}`;
+      chip.onclick = () => filterDoctors(sub.id, sub.name, chip);
+      chipsContainer.appendChild(chip);
+    });
+  }
+
+  function filterDoctors(filterId, title, activeChipEl) {
+    // Update active chip
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    activeChipEl.classList.add('active');
+    
+    // Update title
+    listingsTitle.textContent = title;
+    
+    // Filter docs
     let docs = listingsData.doctors || [];
-    if (subcat) {
-      docs = docs.filter(d => d.specialty === subcat);
+    if (filterId !== 'all') {
+      docs = docs.filter(d => d.specialty === filterId);
+    }
+    
+    // Render
+    renderDoctors(docs, listingsGrid);
+    emptyState.classList.toggle('hidden', docs.length > 0);
+  }
+
+  // Initial Listings Load
+  if (serviceId === 'clinics') {
+    const docs = listingsData.doctors || [];
+    let initialDocs = docs;
+    if (currentSubcat !== 'all') {
+      initialDocs = docs.filter(d => d.specialty === currentSubcat);
       listingsTitle.textContent = subName || 'الأطباء';
     } else {
       listingsTitle.textContent = 'جميع الأطباء';
     }
-    items = docs;
-    renderDoctors(docs, listingsGrid);
+    renderDoctors(initialDocs, listingsGrid);
+    emptyState.classList.toggle('hidden', initialDocs.length > 0);
   } else {
     const places = (listingsData.places || []).filter(p => p.serviceId === serviceId);
     listingsTitle.textContent = service.name;
-    items = places;
     renderPlaces(places, listingsGrid);
-  }
-
-  if (items.length === 0) {
-    emptyState.classList.remove('hidden');
+    emptyState.classList.toggle('hidden', places.length > 0);
   }
 }
 
