@@ -12,8 +12,9 @@ let editingPlaceId  = null;
 const specialtyLabels = {
   internal: 'طب باطني', dental: 'أسنان', bones: 'عظام',
   children: 'أطفال', skin: 'جلدية', eye: 'عيون',
-  ent: 'أنف وأذن وحنجرة', gynecology: 'نساء وتوليد',
-  urology: 'مسالك بولية', neurology: 'أعصاب'
+  ent: 'أنف وأذن وحنجرة', women: 'نساء وتوليد', heart: 'قلب وأوعية دموية',
+  brain: 'مخ وأعصاب ونفسية', speech: 'تخاطب وتعديل سلوك', surgery: 'جراحة عامة',
+  physio: 'علاج طبيعي', chest: 'صدر وجهاز تنفسي', general: 'تخصصات أخرى'
 };
 
 const serviceLabels = {

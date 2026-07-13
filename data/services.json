@@ -20,6 +20,7 @@
         { "id": "speech", "name": "تخاطب وتعديل سلوك", "icon": "🗣️" },
         { "id": "surgery", "name": "جراحة عامة", "icon": "🔪" },
         { "id": "physio", "name": "علاج طبيعي", "icon": "🏃‍♂️" },
+        { "id": "chest", "name": "صدر وجهاز تنفسي", "icon": "🫁" },
         { "id": "general", "name": "تخصصات أخرى", "icon": "🩺" }
       ]
     },
