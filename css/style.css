@@ -704,7 +704,7 @@ body.dark-mode .chip.active {
   transform: translateY(0);
 }
 #backToTopBtn { right: 20px; }
-#darkModeBtn { 
+#addServiceBtn { 
   left: 20px; 
   opacity: 1; 
   pointer-events: auto; 
@@ -713,7 +713,7 @@ body.dark-mode .chip.active {
   color: var(--text-dark);
   border: 1px solid var(--bg);
 }
-body.dark-mode #darkModeBtn { background: var(--bg); border: 1px solid var(--text-mid); }
+body.dark-mode #addServiceBtn { background: var(--bg); border: 1px solid var(--text-mid); }
 
 /* ===== PWA BANNER ===== */
 .pwa-banner {
