@@ -10,8 +10,8 @@ let editingDoctorId = null;
 let editingPlaceId  = null;
 
 const specialtyLabels = {
-  internal: 'طب باطني', dental: 'أسنان', bones: 'عظام',
-  children: 'أطفال', skin: 'جلدية', eye: 'عيون',
+  internal: 'طب باطني واطفال', dental: 'أسنان', bones: 'عظام',
+  skin: 'جلدية', eye: 'عيون',
   ent: 'أنف وأذن وحنجرة', women: 'نساء وتوليد', heart: 'قلب وأوعية دموية',
   brain: 'مخ وأعصاب ونفسية', speech: 'تخاطب وتعديل سلوك', surgery: 'جراحة عامة',
   physio: 'علاج طبيعي', chest: 'صدر وجهاز تنفسي', general: 'تخصصات أخرى'

@@ -7,10 +7,9 @@
       "color": "#4CAF82",
       "description": "عيادات طبية متخصصة بالقناطر الخيرية",
       "subcategories": [
-        { "id": "internal", "name": "طب باطني", "icon": "🫀" },
+        { "id": "internal", "name": "طب باطني واطفال", "icon": "🫀" },
         { "id": "dental", "name": "أسنان", "icon": "🦷" },
         { "id": "bones", "name": "عظام", "icon": "🦴" },
-        { "id": "children", "name": "أطفال", "icon": "👶" },
         { "id": "skin", "name": "جلدية", "icon": "💆" },
         { "id": "eyes", "name": "عيون", "icon": "👁️" },
         { "id": "ent", "name": "أنف وأذن وحنجرة", "icon": "👂" },

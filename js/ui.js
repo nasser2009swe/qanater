@@ -1,20 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Inject Dark Mode Button
-  const darkModeBtn = document.createElement('button');
-  darkModeBtn.id = 'darkModeBtn';
-  darkModeBtn.className = 'floating-btn visible';
-  darkModeBtn.innerHTML = localStorage.getItem('theme') === 'dark' ? '☀️' : '🌙';
-  document.body.appendChild(darkModeBtn);
+  // Inject Add Service Button
+  const addServiceBtn = document.createElement('button');
+  addServiceBtn.id = 'addServiceBtn';
+  addServiceBtn.className = 'floating-btn visible';
+  addServiceBtn.innerHTML = '➕';
+  addServiceBtn.title = 'إضافة خدمة جديدة';
+  document.body.appendChild(addServiceBtn);
 
   if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark-mode');
   }
 
-  darkModeBtn.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    darkModeBtn.innerHTML = isDark ? '☀️' : '🌙';
+  addServiceBtn.addEventListener('click', () => {
+    const isSubPage = window.location.pathname.includes('/pages/') || window.location.pathname.includes('/admin/');
+    window.location.href = isSubPage ? '../pages/request.html' : 'pages/request.html';
   });
 
   // Inject Back To Top Button
