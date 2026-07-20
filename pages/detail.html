@@ -40,6 +40,45 @@
 
     <!-- Actions -->
     <div class="action-buttons" id="actionButtons"></div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section" style="margin-top: 30px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 20px;">
+      <h3 style="margin-bottom: 15px; font-size: 1.2rem;">⭐ آراء الزوار</h3>
+      
+      <!-- Existing Reviews -->
+      <div id="reviewsList" class="reviews-list" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px;">
+        <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">جاري تحميل التعليقات...</p>
+      </div>
+
+      <!-- Add Review Form -->
+      <div id="addReviewBox" class="admin-card" style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px;">
+        <h4 style="margin-bottom: 10px; font-size: 1rem;">أضف تقييمك</h4>
+        <div class="alert alert-success" id="reviewSuccess" style="display:none; padding: 10px; margin-bottom: 10px; font-size: 0.85rem;">✅ تم إضافة التقييم بنجاح</div>
+        <div class="alert alert-error" id="reviewError" style="display:none; padding: 10px; margin-bottom: 10px; font-size: 0.85rem;">❌ يرجى ملء الاسم والتعليق واختيار التقييم</div>
+        
+        <div class="form-group" style="margin-bottom: 10px;">
+          <input type="text" class="form-input" id="reviewName" placeholder="الاسم (اختياري، أو سيظهر كـ زائر)"/>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 10px;">
+          <div class="star-rating-input" id="starRatingInput" style="display: flex; gap: 5px; font-size: 1.8rem; color: rgba(255,255,255,0.2); cursor: pointer; justify-content: center; margin-bottom: 10px;">
+            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+          </div>
+          <input type="hidden" id="reviewRatingVal" value="0" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 10px;">
+          <textarea class="form-textarea" id="reviewComment" placeholder="اكتب تعليقك هنا..." rows="3"></textarea>
+        </div>
+        
+        <button class="btn-primary" id="submitReviewBtn" onclick="submitReview()" style="width: 100%;">نشر التقييم</button>
+      </div>
+      
+      <!-- Already Reviewed State -->
+      <div id="alreadyReviewedBox" class="admin-card" style="display: none; background: rgba(39, 174, 96, 0.1); border: 1px solid rgba(39, 174, 96, 0.3); padding: 15px; border-radius: 12px; text-align: center;">
+        <p style="color: #27ae60; margin: 0; font-weight: bold;">شكراً لك! لقد قمت بتقييم هذه الخدمة مسبقاً.</p>
+      </div>
+    </div>
   </main>
 
   <nav class="bottom-nav">

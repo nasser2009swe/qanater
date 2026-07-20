@@ -150,4 +150,143 @@ function renderPlace(place) {
   }
 }
 
+// --- Reviews Logic ---
+let currentEntityType = 'doctor';
+let currentEntityId = '';
+
+async function loadEntityReviews(id) {
+  try {
+    const { data, error } = await supabaseClient
+      .from('reviews')
+      .select('*')
+      .eq('entity_id', id)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    renderReviewsList(data || []);
+  } catch (err) {
+    console.error('Error loading reviews', err);
+    document.getElementById('reviewsList').innerHTML = '<p style="color:rgba(255,255,255,0.5);">تعذر تحميل التعليقات.</p>';
+  }
+}
+
+function renderReviewsList(reviews) {
+  const list = document.getElementById('reviewsList');
+  if (!reviews || reviews.length === 0) {
+    list.innerHTML = '<p style="color:rgba(255,255,255,0.5); font-size: 0.9rem;">لا توجد تعليقات حتى الآن. كن أول من يقيّم!</p>';
+    return;
+  }
+
+  list.innerHTML = reviews.map(rev => {
+    const date = new Date(rev.created_at).toLocaleDateString('ar-EG');
+    return `
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <strong style="font-size: 0.95rem; color: #fff;">${rev.user_name}</strong>
+          <span style="font-size: 0.8rem; color: rgba(255,255,255,0.4);">${date}</span>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <span style="color: #f1c40f; font-size: 1rem;">${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}</span>
+        </div>
+        <p style="margin: 0; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.5;">${rev.comment || ''}</p>
+      </div>
+    `;
+  }).join('');
+}
+
+function setupRatingInput() {
+  const stars = document.querySelectorAll('#starRatingInput span');
+  const hiddenInput = document.getElementById('reviewRatingVal');
+  
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      const val = parseInt(star.getAttribute('data-val'));
+      hiddenInput.value = val;
+      
+      // Update UI
+      stars.forEach(s => {
+        if (parseInt(s.getAttribute('data-val')) <= val) {
+          s.style.color = '#f1c40f'; // Yellow
+        } else {
+          s.style.color = 'rgba(255,255,255,0.2)'; // Gray
+        }
+      });
+    });
+  });
+}
+
+async function submitReview() {
+  const name = document.getElementById('reviewName').value.trim() || 'زائر';
+  const comment = document.getElementById('reviewComment').value.trim();
+  const rating = parseInt(document.getElementById('reviewRatingVal').value);
+
+  const errorEl = document.getElementById('reviewError');
+  const successEl = document.getElementById('reviewSuccess');
+  const btn = document.getElementById('submitReviewBtn');
+
+  if (rating === 0) {
+    errorEl.style.display = 'block';
+    setTimeout(() => errorEl.style.display = 'none', 3000);
+    return;
+  }
+
+  btn.textContent = 'جاري الإرسال...';
+  btn.disabled = true;
+
+  try {
+    const { error } = await supabaseClient.from('reviews').insert([{
+      entity_id: currentEntityId,
+      entity_type: currentEntityType,
+      user_name: name,
+      rating: rating,
+      comment: comment
+    }]);
+
+    if (error) throw error;
+
+    // Success
+    successEl.style.display = 'block';
+    localStorage.setItem(`qanater_reviewed_${currentEntityId}`, 'true');
+    
+    // Hide form, show thanks
+    setTimeout(() => {
+      document.getElementById('addReviewBox').style.display = 'none';
+      document.getElementById('alreadyReviewedBox').style.display = 'block';
+      loadEntityReviews(currentEntityId); // Reload list
+    }, 1500);
+
+  } catch (err) {
+    console.error('Submit error:', err);
+    errorEl.textContent = '❌ حدث خطأ أثناء الإرسال.';
+    errorEl.style.display = 'block';
+    setTimeout(() => errorEl.style.display = 'none', 3000);
+    btn.textContent = 'نشر التقييم';
+    btn.disabled = false;
+  }
+}
+
+// Override initDetail slightly to set up reviews
+const originalInitDetail = initDetail;
+initDetail = async function() {
+  await originalInitDetail();
+  
+  const type = getParam('type');
+  const id = getParam('id');
+  if (!id) return;
+
+  currentEntityType = type;
+  currentEntityId = id;
+
+  // Check if already reviewed
+  if (localStorage.getItem(`qanater_reviewed_${id}`)) {
+    document.getElementById('addReviewBox').style.display = 'none';
+    document.getElementById('alreadyReviewedBox').style.display = 'block';
+  } else {
+    setupRatingInput();
+  }
+
+  // Load reviews
+  loadEntityReviews(id);
+};
+
 document.addEventListener('DOMContentLoaded', initDetail);
