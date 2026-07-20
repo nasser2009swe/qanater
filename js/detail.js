@@ -173,22 +173,22 @@ async function loadEntityReviews(id) {
 function renderReviewsList(reviews) {
   const list = document.getElementById('reviewsList');
   if (!reviews || reviews.length === 0) {
-    list.innerHTML = '<p style="color:rgba(255,255,255,0.5); font-size: 0.9rem;">لا توجد تعليقات حتى الآن. كن أول من يقيّم!</p>';
+    list.innerHTML = '<p style="color:var(--text-light); font-size: 0.9rem;">لا توجد تعليقات حتى الآن. كن أول من يقيّم!</p>';
     return;
   }
 
   list.innerHTML = reviews.map(rev => {
     const date = new Date(rev.created_at).toLocaleDateString('ar-EG');
     return `
-      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px;">
+      <div style="background: var(--card-bg); border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; padding: 14px; box-shadow: var(--shadow);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <strong style="font-size: 0.95rem; color: #fff;">${rev.user_name}</strong>
-          <span style="font-size: 0.8rem; color: rgba(255,255,255,0.4);">${date}</span>
+          <strong style="font-size: 0.95rem; color: var(--text-dark);">${rev.user_name}</strong>
+          <span style="font-size: 0.8rem; color: var(--text-light);">${date}</span>
         </div>
         <div style="margin-bottom: 8px;">
           <span style="color: #f1c40f; font-size: 1rem;">${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}</span>
         </div>
-        <p style="margin: 0; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.5;">${rev.comment || ''}</p>
+        <p style="margin: 0; font-size: 0.9rem; color: var(--text-mid); line-height: 1.5;">${rev.comment || ''}</p>
       </div>
     `;
   }).join('');
@@ -208,7 +208,7 @@ function setupRatingInput() {
         if (parseInt(s.getAttribute('data-val')) <= val) {
           s.style.color = '#f1c40f'; // Yellow
         } else {
-          s.style.color = 'rgba(255,255,255,0.2)'; // Gray
+          s.style.color = '#ccc'; // Gray
         }
       });
     });
