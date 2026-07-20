@@ -1,13 +1,14 @@
 const ADS_KEY = 'qanater_ads';
 
 async function loadAds() {
-  const stored = localStorage.getItem(ADS_KEY);
-  if (stored) { try { return JSON.parse(stored); } catch(e) {} }
   try {
-    const res = await fetch('data/ads.json?t=' + Date.now());
-    const data = await res.json();
-    return data.ads || [];
-  } catch(e) { return []; }
+    const { data, error } = await supabaseClient.from('ads').select('*');
+    if (error) throw error;
+    return data || [];
+  } catch(e) {
+    console.error('Error loading ads', e);
+    return [];
+  }
 }
 
 async function initAds() {

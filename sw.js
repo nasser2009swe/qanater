@@ -5,11 +5,13 @@ const ASSETS_TO_CACHE = [
   './css/style.css',
   './js/app.js',
   './js/ads.js',
+  './js/ui.js',
+  './js/service.js',
+  './js/detail.js',
+  './js/supabase-config.js',
   './manifest.json',
-  './data/services.json',
-  './data/listings.json',
-  './data/ads.json',
-  './pages/service.html'
+  './pages/service.html',
+  './pages/detail.html'
 ];
 
 self.addEventListener('install', event => {
@@ -33,21 +35,10 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Stale-while-revalidate strategy for data files, Cache First for others
-  const isDataFile = event.request.url.includes('.json');
-
-  if (isDataFile) {
-    event.respondWith(
-      caches.open(CACHE_NAME).then(cache => {
-        return fetch(event.request).then(response => {
-          cache.put(event.request, response.clone());
-          return response;
-        }).catch(() => {
-          return cache.match(event.request);
-        });
-      })
-    );
-  } else {
+  // If request is for Supabase API, let it pass through network directly
+  if (event.request.url.includes('supabase.co')) {
+    return;
+  }
     event.respondWith(
       caches.match(event.request).then(response => {
         return response || fetch(event.request).then(fetchRes => {
@@ -61,5 +52,4 @@ self.addEventListener('fetch', event => {
         return new Response('Offline Content Not Available');
       })
     );
-  }
 });

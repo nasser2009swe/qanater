@@ -1,22 +1,27 @@
-// ===== DATA LAYER =====
-async function loadJSON(path) {
+// ===== DATA LAYER (Supabase) =====
+async function fetchSupabase(table) {
   try {
-    const res = await fetch(path + '?t=' + Date.now());
-    if (!res.ok) throw new Error('not found');
-    return await res.json();
+    const { data, error } = await supabaseClient.from(table).select('*');
+    if (error) throw error;
+    return data;
   } catch(e) {
+    console.error('Error fetching', table, e);
     return null;
   }
 }
 
 // ===== HOME PAGE =====
 async function initHome() {
-  const [data, listings] = await Promise.all([
-    loadJSON('data/services.json'),
-    loadJSON('data/listings.json')
+  const [services, doctors, places] = await Promise.all([
+    fetchSupabase('services'),
+    fetchSupabase('doctors'),
+    fetchSupabase('places')
   ]);
   
-  if (!data) return;
+  if (!services) return;
+  const data = { services };
+  const listings = { doctors: doctors || [], places: places || [] };
+  
   const grid = document.getElementById('servicesGrid');
   const searchResultsGrid = document.getElementById('searchResultsGrid');
   const homeSectionTitle = document.getElementById('homeSectionTitle');

@@ -28,32 +28,46 @@
     <a href="../pages/request.html" style="color:var(--accent);font-size:0.9rem;text-decoration:none;font-weight:bold;">📝 طلب إضافة خدمة للموقع</a>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/supabase-config.js"></script>
   <script>
-    async function loadConfig() {
-      // Check localStorage for admin-changed credentials first
-      const stored = localStorage.getItem('qanater_config');
-      if (stored) { try { return JSON.parse(stored); } catch(e) {} }
-      try {
-        const res = await fetch('../data/config.json?t=' + Date.now());
-        return await res.json();
-      } catch(e) { return { username: 'admin', password: 'qanater2024' }; }
-    }
-
     async function doLogin() {
       const u = document.getElementById('username').value.trim();
       const p = document.getElementById('password').value.trim();
-      const cfg = await loadConfig();
-      if (u === cfg.username && p === cfg.password) {
-        sessionStorage.setItem('adminAuth', 'true');
-        window.location.href = 'dashboard.html';
-      } else {
+      
+      if (!u || !p) return;
+
+      const btn = document.getElementById('loginBtn');
+      btn.textContent = 'جاري تسجيل الدخول...';
+      btn.disabled = true;
+
+      // We use email for Supabase auth
+      const email = u.includes('@') ? u : `${u}@qanater.com`;
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: p
+      });
+
+      if (error) {
+        btn.textContent = 'تسجيل الدخول';
+        btn.disabled = false;
         document.getElementById('loginError').style.display = 'block';
         setTimeout(() => document.getElementById('loginError').style.display = 'none', 3000);
+      } else {
+        window.location.href = 'dashboard.html';
       }
     }
 
     document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-    if (sessionStorage.getItem('adminAuth') === 'true') window.location.href = 'dashboard.html';
+    
+    // Check if already logged in
+    document.addEventListener('DOMContentLoaded', async () => {
+      const { data } = await supabaseClient.auth.getSession();
+      if (data.session) {
+        window.location.href = 'dashboard.html';
+      }
+    });
   </script>
 </body>
 </html>

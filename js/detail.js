@@ -1,12 +1,14 @@
 const STORAGE_KEY = 'qanater_listings';
 
 async function loadListings() {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) { try { return JSON.parse(stored); } catch(e) {} }
-  try {
-    const res = await fetch('../data/listings.json?t=' + Date.now());
-    return await res.json();
-  } catch(e) { return { doctors: [], places: [] }; }
+  const [doctorsRes, placesRes] = await Promise.all([
+    supabaseClient.from('doctors').select('*'),
+    supabaseClient.from('places').select('*')
+  ]);
+  return {
+    doctors: doctorsRes.data || [],
+    places: placesRes.data || []
+  };
 }
 
 function getParam(name) {

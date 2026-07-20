@@ -1,13 +1,16 @@
-// Auth check
-if (sessionStorage.getItem('adminAuth') !== 'true') {
-  window.location.href = 'login.html';
-}
+// Auth check using Supabase
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data } = await supabaseClient.auth.getSession();
+  if (!data.session) {
+    window.location.href = 'login.html';
+  } else {
+    init();
+  }
+});
 
-const STORAGE_KEY = 'qanater_listings';
-
-// Edit state - stores ID being edited (null = add mode)
 let editingDoctorId = null;
 let editingPlaceId  = null;
+let editingAdId = null;
 
 const specialtyLabels = {
   internal: 'طب باطني واطفال', dental: 'أسنان', bones: 'عظام',
@@ -24,21 +27,6 @@ const serviceLabels = {
   beauty:'صالون تجميل', electronics:'إلكترونيات',
   nurseries: 'حضانات', travel: 'سياحة وسفر', clothing: 'محلات ملابس', other: 'أخرى'
 };
-
-async function loadData() {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) { try { return JSON.parse(stored); } catch(e) {} }
-  try {
-    const res = await fetch('../data/listings.json?t=' + Date.now());
-    const data = await res.json();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    return data;
-  } catch(e) { return { doctors: [], places: [] }; }
-}
-
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
 
 function genId(prefix) { return prefix + Date.now().toString(36); }
 
@@ -61,23 +49,32 @@ function scrollToForm(formId) {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// ===== LOAD DATA FROM SUPABASE =====
+async function getDoctors() {
+  const { data, error } = await supabaseClient.from('doctors').select('*');
+  return error ? [] : (data || []);
+}
+async function getPlaces() {
+  const { data, error } = await supabaseClient.from('places').select('*');
+  return error ? [] : (data || []);
+}
+async function getAds() {
+  const { data, error } = await supabaseClient.from('ads').select('*');
+  return error ? [] : (data || []);
+}
+
 // ===== DOCTORS =====
 async function saveDoctor() {
-  const name     = document.getElementById('docName').value.trim();
+  const name = document.getElementById('docName').value.trim();
   const specialty = document.getElementById('docSpecialty').value;
   if (!name) { showAlert('docError'); return; }
 
-  // Parse phones: split by comma or dash, clean up
   const phoneRaw = document.getElementById('docPhone').value.trim();
   const phones = phoneRaw ? phoneRaw.split(/[,،\-]+/).map(p => p.trim()).filter(p => p) : [];
   const whatsappIndex = parseInt(document.getElementById('docWhatsappIndex').value) || 0;
 
-  const data = await loadData();
-  data.doctors = data.doctors || [];
-
   const docData = {
-    name, specialty,
-    phones,
+    name, specialty, phones,
     phone: phones.join(' - '),
     whatsappIndex,
     image:    document.getElementById('docImage').value.trim(),
@@ -91,52 +88,58 @@ async function saveDoctor() {
     serviceId: 'clinics',
   };
 
+  let error;
   if (editingDoctorId) {
-    const idx = data.doctors.findIndex(d => d.id === editingDoctorId);
-    if (idx !== -1) {
-      data.doctors[idx] = { ...data.doctors[idx], ...docData };
-    }
+    docData.id = editingDoctorId;
+    const res = await supabaseClient.from('doctors').upsert(docData);
+    error = res.error;
     editingDoctorId = null;
-    document.getElementById('saveDoctorBtn').textContent = '\u{1F4BE} \u062D\u0641\u0638 \u0627\u0644\u0637\u0628\u064A\u0628';
-    document.getElementById('docFormTitle').textContent  = '\u{2795} \u0625\u0636\u0627\u0641\u0629 \u0637\u0628\u064A\u0628 \u062C\u062F\u064A\u062F';
+    document.getElementById('saveDoctorBtn').textContent = '💾 حفظ الطبيب';
+    document.getElementById('docFormTitle').textContent  = '➕ إضافة طبيب جديد';
     document.getElementById('cancelDoctorEdit').style.display = 'none';
   } else {
-    data.doctors.push({ id: genId('d'), reviews: 0, ...docData });
+    docData.id = genId('d');
+    docData.reviews = 0;
+    const res = await supabaseClient.from('doctors').insert([docData]);
+    error = res.error;
   }
 
-  saveData(data);
-  showAlert('docSuccess');
-  clearDoctorForm();
-  renderDoctorsList(data);
+  if (error) {
+    console.error(error);
+    showAlert('docError');
+  } else {
+    showAlert('docSuccess');
+    clearDoctorForm();
+    const docs = await getDoctors();
+    renderDoctorsList(docs);
+  }
 }
 
-function editDoctor(id) {
-  loadData().then(data => {
-    const doc = (data.doctors || []).find(d => d.id === id);
-    if (!doc) return;
+async function editDoctor(id) {
+  const docs = await getDoctors();
+  const doc = docs.find(d => d.id === id);
+  if (!doc) return;
 
-    editingDoctorId = id;
-    document.getElementById('docName').value     = doc.name     || '';
-    document.getElementById('docSpecialty').value= doc.specialty|| 'internal';
-    // Show phones joined by comma for editing
-    const phonesDisplay = doc.phones && doc.phones.length > 0 ? doc.phones.join(', ') : (doc.phone || '');
-    document.getElementById('docPhone').value    = phonesDisplay;
-    document.getElementById('docWhatsappIndex').value = doc.whatsappIndex || 0;
-    document.getElementById('docAddress').value  = doc.address  || '';
-    document.getElementById('docSchedule').value = doc.schedule || '';
-    document.getElementById('docFees').value     = doc.fees     || '';
-    document.getElementById('docLocation').value = doc.location || '';
-    document.getElementById('docFacebook').value = doc.facebook || '';
-    document.getElementById('docImage').value    = doc.image    || '';
-    document.getElementById('docAbout').value    = doc.about    || '';
-    document.getElementById('docRating').value   = doc.rating   || '';
+  editingDoctorId = id;
+  document.getElementById('docName').value     = doc.name     || '';
+  document.getElementById('docSpecialty').value= doc.specialty|| 'internal';
+  const phonesDisplay = doc.phones && doc.phones.length > 0 ? doc.phones.join(', ') : (doc.phone || '');
+  document.getElementById('docPhone').value    = phonesDisplay;
+  document.getElementById('docWhatsappIndex').value = doc.whatsappIndex || 0;
+  document.getElementById('docAddress').value  = doc.address  || '';
+  document.getElementById('docSchedule').value = doc.schedule || '';
+  document.getElementById('docFees').value     = doc.fees     || '';
+  document.getElementById('docLocation').value = doc.location || '';
+  document.getElementById('docFacebook').value = doc.facebook || '';
+  document.getElementById('docImage').value    = doc.image    || '';
+  document.getElementById('docAbout').value    = doc.about    || '';
+  document.getElementById('docRating').value   = doc.rating   || '';
 
-    document.getElementById('saveDoctorBtn').textContent = '\u270F\uFE0F \u062D\u0641\u0638 \u0627\u0644\u062A\u0639\u062F\u064A\u0644';
-    document.getElementById('docFormTitle').textContent  = '\u270F\uFE0F \u062A\u0639\u062F\u064A\u0644 \u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u0637\u0628\u064A\u0628';
-    document.getElementById('cancelDoctorEdit').style.display = 'block';
+  document.getElementById('saveDoctorBtn').textContent = '✏️ حفظ التعديل';
+  document.getElementById('docFormTitle').textContent  = '✏️ تعديل بيانات الطبيب';
+  document.getElementById('cancelDoctorEdit').style.display = 'block';
 
-    scrollToForm('docFormCard');
-  });
+  scrollToForm('docFormCard');
 }
 
 function cancelDoctorEdit() {
@@ -157,15 +160,15 @@ function clearDoctorForm() {
 async function deleteDoctor(id) {
   if (!confirm('هل تريد حذف هذا الطبيب؟')) return;
   if (editingDoctorId === id) cancelDoctorEdit();
-  const data = await loadData();
-  data.doctors = data.doctors.filter(d => d.id !== id);
-  saveData(data);
-  renderDoctorsList(data);
+  
+  await supabaseClient.from('doctors').delete().eq('id', id);
+  
+  const docs = await getDoctors();
+  renderDoctorsList(docs);
 }
 
-function renderDoctorsList(data) {
+function renderDoctorsList(docs) {
   const list = document.getElementById('doctorsList');
-  const docs = data.doctors || [];
   document.getElementById('docCount').textContent = `(${docs.length})`;
   if (docs.length === 0) {
     list.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px;">لا يوجد أطباء بعد</p>';
@@ -191,75 +194,68 @@ async function savePlace() {
   const serviceId = document.getElementById('placeService').value;
   if (!name) { showAlert('placeError'); return; }
 
-  const data = await loadData();
-  data.places = data.places || [];
+  const placeData = {
+    name, serviceId,
+    image:        document.getElementById('placeImage').value.trim(),
+    phone:        document.getElementById('placePhone').value.trim(),
+    address:      document.getElementById('placeAddress').value.trim(),
+    location:     document.getElementById('placeLocation').value.trim(),
+    facebook:     document.getElementById('placeFacebook').value.trim(),
+    workingHours: document.getElementById('placeHours').value.trim(),
+    about:        document.getElementById('placeAbout').value.trim(),
+    rating:       parseFloat(document.getElementById('placeRating').value) || 0,
+  };
 
+  let error;
   if (editingPlaceId) {
-    // UPDATE existing
-    const idx = data.places.findIndex(p => p.id === editingPlaceId);
-    if (idx !== -1) {
-      data.places[idx] = {
-        ...data.places[idx],
-        name, serviceId,
-        image:        document.getElementById('placeImage').value.trim(),
-        phone:        document.getElementById('placePhone').value.trim(),
-        address:      document.getElementById('placeAddress').value.trim(),
-        location:     document.getElementById('placeLocation').value.trim(),
-        facebook:     document.getElementById('placeFacebook').value.trim(),
-        workingHours: document.getElementById('placeHours').value.trim(),
-        about:        document.getElementById('placeAbout').value.trim(),
-        rating:       parseFloat(document.getElementById('placeRating').value) || 0,
-      };
-    }
+    placeData.id = editingPlaceId;
+    const res = await supabaseClient.from('places').upsert(placeData);
+    error = res.error;
     editingPlaceId = null;
     document.getElementById('savePlaceBtn').textContent = '💾 حفظ المكان';
     document.getElementById('placeFormTitle').textContent = '➕ إضافة مكان جديد';
     document.getElementById('cancelPlaceEdit').style.display = 'none';
   } else {
-    // ADD new
-    data.places.push({
-      id: genId('p'), name, serviceId, subcategory: '',
-      image:        document.getElementById('placeImage').value.trim(),
-      phone:        document.getElementById('placePhone').value.trim(),
-      address:      document.getElementById('placeAddress').value.trim(),
-      location:     document.getElementById('placeLocation').value.trim(),
-      facebook:     document.getElementById('placeFacebook').value.trim(),
-      workingHours: document.getElementById('placeHours').value.trim(),
-      about:        document.getElementById('placeAbout').value.trim(),
-      rating:       parseFloat(document.getElementById('placeRating').value) || 0,
-      reviews:      0
-    });
+    placeData.id = genId('p');
+    placeData.reviews = 0;
+    placeData.subcategory = '';
+    const res = await supabaseClient.from('places').insert([placeData]);
+    error = res.error;
   }
 
-  saveData(data);
-  showAlert('placeSuccess');
-  clearPlaceForm();
-  renderPlacesList(data);
+  if (error) {
+    console.error(error);
+    showAlert('placeError');
+  } else {
+    showAlert('placeSuccess');
+    clearPlaceForm();
+    const places = await getPlaces();
+    renderPlacesList(places);
+  }
 }
 
-function editPlace(id) {
-  loadData().then(data => {
-    const place = (data.places || []).find(p => p.id === id);
-    if (!place) return;
+async function editPlace(id) {
+  const places = await getPlaces();
+  const place = places.find(p => p.id === id);
+  if (!place) return;
 
-    editingPlaceId = id;
-    document.getElementById('placeName').value    = place.name         || '';
-    document.getElementById('placeService').value = place.serviceId    || 'pharmacies';
-    document.getElementById('placePhone').value   = place.phone        || '';
-    document.getElementById('placeAddress').value = place.address      || '';
-    document.getElementById('placeHours').value   = place.workingHours || '';
-    document.getElementById('placeLocation').value= place.location     || '';
-    document.getElementById('placeFacebook').value= place.facebook     || '';
-    document.getElementById('placeImage').value   = place.image        || '';
-    document.getElementById('placeAbout').value   = place.about        || '';
-    document.getElementById('placeRating').value  = place.rating       || '';
+  editingPlaceId = id;
+  document.getElementById('placeName').value    = place.name         || '';
+  document.getElementById('placeService').value = place.serviceId    || 'pharmacies';
+  document.getElementById('placePhone').value   = place.phone        || '';
+  document.getElementById('placeAddress').value = place.address      || '';
+  document.getElementById('placeHours').value   = place.workingHours || '';
+  document.getElementById('placeLocation').value= place.location     || '';
+  document.getElementById('placeFacebook').value= place.facebook     || '';
+  document.getElementById('placeImage').value   = place.image        || '';
+  document.getElementById('placeAbout').value   = place.about        || '';
+  document.getElementById('placeRating').value  = place.rating       || '';
 
-    document.getElementById('savePlaceBtn').textContent  = '✏️ حفظ التعديل';
-    document.getElementById('placeFormTitle').textContent = '✏️ تعديل بيانات المكان';
-    document.getElementById('cancelPlaceEdit').style.display = 'block';
+  document.getElementById('savePlaceBtn').textContent  = '✏️ حفظ التعديل';
+  document.getElementById('placeFormTitle').textContent = '✏️ تعديل بيانات المكان';
+  document.getElementById('cancelPlaceEdit').style.display = 'block';
 
-    scrollToForm('placeFormCard');
-  });
+  scrollToForm('placeFormCard');
 }
 
 function cancelPlaceEdit() {
@@ -279,15 +275,15 @@ function clearPlaceForm() {
 async function deletePlace(id) {
   if (!confirm('هل تريد حذف هذا المكان؟')) return;
   if (editingPlaceId === id) cancelPlaceEdit();
-  const data = await loadData();
-  data.places = data.places.filter(p => p.id !== id);
-  saveData(data);
-  renderPlacesList(data);
+  
+  await supabaseClient.from('places').delete().eq('id', id);
+  
+  const places = await getPlaces();
+  renderPlacesList(places);
 }
 
-function renderPlacesList(data) {
+function renderPlacesList(places) {
   const list = document.getElementById('placesList');
-  const places = data.places || [];
   document.getElementById('placeCount').textContent = `(${places.length})`;
   if (places.length === 0) {
     list.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px;">لا توجد أماكن بعد</p>';
@@ -307,63 +303,11 @@ function renderPlacesList(data) {
   `).join('');
 }
 
-// ===== SETTINGS =====
-async function saveSettings() {
-  const username = document.getElementById('newUsername').value.trim();
-  const password = document.getElementById('newPassword').value.trim();
-  const confirm  = document.getElementById('confirmPassword').value.trim();
-
-  if (!username || !password || !confirm) { showAlert('settingsError'); return; }
-  if (password !== confirm) {
-    document.getElementById('settingsError').textContent = '❌ كلمتا المرور غير متطابقتين';
-    showAlert('settingsError'); return;
-  }
-
-  let config = {};
-  try {
-    const res = await fetch('../data/config.json?t=' + Date.now());
-    config = await res.json();
-  } catch(e) {}
-
-  config.username = username;
-  config.password = password;
-  localStorage.setItem('qanater_config', JSON.stringify(config));
-
-  const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = 'config.json'; a.click();
-  URL.revokeObjectURL(url);
-
-  document.getElementById('newUsername').value = '';
-  document.getElementById('newPassword').value = '';
-  document.getElementById('confirmPassword').value = '';
-  showAlert('settingsSuccess');
-}
-
 // ===== ADS =====
-const ADS_KEY = 'qanater_ads';
-let editingAdId = null;
-
-async function loadAds() {
-  const stored = localStorage.getItem(ADS_KEY);
-  if (stored) { try { return JSON.parse(stored); } catch(e) {} }
-  try {
-    const res = await fetch('../data/ads.json?t=' + Date.now());
-    const data = await res.json();
-    const ads = data.ads || [];
-    localStorage.setItem(ADS_KEY, JSON.stringify(ads));
-    return ads;
-  } catch(e) { return []; }
-}
-
-function saveAdsData(ads) { localStorage.setItem(ADS_KEY, JSON.stringify(ads)); }
-
 async function saveAd() {
   const title = document.getElementById('adTitle').value.trim();
   if (!title) { showAlert('adError'); return; }
 
-  const ads = await loadAds();
   const adObj = {
     title,
     description: document.getElementById('adDesc').value.trim(),
@@ -374,40 +318,48 @@ async function saveAd() {
     active:      document.getElementById('adActive').checked,
   };
 
+  let error;
   if (editingAdId) {
-    const idx = ads.findIndex(a => a.id === editingAdId);
-    if (idx !== -1) ads[idx] = { ...ads[idx], ...adObj };
+    adObj.id = editingAdId;
+    const res = await supabaseClient.from('ads').upsert(adObj);
+    error = res.error;
     editingAdId = null;
     document.getElementById('saveAdBtn').textContent   = '💾 حفظ الإعلان';
     document.getElementById('adFormTitle').textContent = '📢 إضافة إعلان جديد';
     document.getElementById('cancelAdEdit').style.display = 'none';
   } else {
-    ads.push({ id: genId('ad'), ...adObj });
+    adObj.id = genId('ad');
+    const res = await supabaseClient.from('ads').insert([adObj]);
+    error = res.error;
   }
 
-  saveAdsData(ads);
-  showAlert('adSuccess');
-  clearAdForm();
-  renderAdsList(ads);
+  if (error) {
+    console.error(error);
+    showAlert('adError');
+  } else {
+    showAlert('adSuccess');
+    clearAdForm();
+    const ads = await getAds();
+    renderAdsList(ads);
+  }
 }
 
-function editAd(id) {
-  loadAds().then(ads => {
-    const ad = ads.find(a => a.id === id);
-    if (!ad) return;
-    editingAdId = id;
-    document.getElementById('adTitle').value    = ad.title       || '';
-    document.getElementById('adDesc').value     = ad.description || '';
-    document.getElementById('adImage').value    = ad.image       || '';
-    document.getElementById('adLink').value     = ad.link        || '';
-    document.getElementById('adLinkText').value = ad.linkText    || '';
-    document.getElementById('adBgColor').value  = ad.bgColor     || '#1B4F72';
-    document.getElementById('adActive').checked = ad.active !== false;
-    document.getElementById('saveAdBtn').textContent   = '✏️ حفظ التعديل';
-    document.getElementById('adFormTitle').textContent = '✏️ تعديل الإعلان';
-    document.getElementById('cancelAdEdit').style.display = 'block';
-    scrollToForm('adFormCard');
-  });
+async function editAd(id) {
+  const ads = await getAds();
+  const ad = ads.find(a => a.id === id);
+  if (!ad) return;
+  editingAdId = id;
+  document.getElementById('adTitle').value    = ad.title       || '';
+  document.getElementById('adDesc').value     = ad.description || '';
+  document.getElementById('adImage').value    = ad.image       || '';
+  document.getElementById('adLink').value     = ad.link        || '';
+  document.getElementById('adLinkText').value = ad.linkText    || '';
+  document.getElementById('adBgColor').value  = ad.bgColor     || '#1B4F72';
+  document.getElementById('adActive').checked = ad.active !== false;
+  document.getElementById('saveAdBtn').textContent   = '✏️ حفظ التعديل';
+  document.getElementById('adFormTitle').textContent = '✏️ تعديل الإعلان';
+  document.getElementById('cancelAdEdit').style.display = 'block';
+  scrollToForm('adFormCard');
 }
 
 function cancelAdEdit() {
@@ -427,17 +379,20 @@ function clearAdForm() {
 async function deleteAd(id) {
   if (!confirm('هل تريد حذف هذا الإعلان؟')) return;
   if (editingAdId === id) cancelAdEdit();
-  const ads = (await loadAds()).filter(a => a.id !== id);
-  saveAdsData(ads);
+  
+  await supabaseClient.from('ads').delete().eq('id', id);
+  const ads = await getAds();
   renderAdsList(ads);
 }
 
 async function toggleAd(id) {
-  const ads = await loadAds();
-  const idx = ads.findIndex(a => a.id === id);
-  if (idx !== -1) ads[idx].active = !ads[idx].active;
-  saveAdsData(ads);
-  renderAdsList(ads);
+  const ads = await getAds();
+  const ad = ads.find(a => a.id === id);
+  if (ad) {
+    await supabaseClient.from('ads').update({ active: !ad.active }).eq('id', id);
+    const newAds = await getAds();
+    renderAdsList(newAds);
+  }
 }
 
 function renderAdsList(ads) {
@@ -464,40 +419,28 @@ function renderAdsList(ads) {
   `).join('');
 }
 
-// ===== EXPORT =====
-function exportListings() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) { alert('لا توجد بيانات للتصدير'); return; }
-  const blob = new Blob([raw], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = 'listings.json'; a.click();
-  URL.revokeObjectURL(url);
+// ===== SETTINGS & EXPORT (DISABLED) =====
+function saveSettings() {
+  alert('هذه الميزة تم تعطيلها بعد التحديث. قم بتغيير كلمة المرور من لوحة تحكم Supabase.');
 }
-
+function exportListings() {
+  alert('التصدير غير مطلوب الآن، البيانات متصلة بقاعدة البيانات (السحابة) مباشرة.');
+}
 function exportAds() {
-  const raw = localStorage.getItem(ADS_KEY);
-  if (!raw) { alert('لا توجد إعلانات للتصدير'); return; }
-  const blob = new Blob([JSON.stringify({ ads: JSON.parse(raw) }, null, 2)], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = 'ads.json'; a.click();
-  URL.revokeObjectURL(url);
+  alert('التصدير غير مطلوب الآن، البيانات متصلة بقاعدة البيانات (السحابة) مباشرة.');
 }
 
 // ===== LOGOUT =====
-function logout() {
-  sessionStorage.removeItem('adminAuth');
+async function logout() {
+  await supabaseClient.auth.signOut();
   window.location.href = 'login.html';
 }
 
 // ===== INIT =====
 async function init() {
-  const [data, ads] = await Promise.all([loadData(), loadAds()]);
-  renderDoctorsList(data);
-  renderPlacesList(data);
+  const [docs, places, ads] = await Promise.all([getDoctors(), getPlaces(), getAds()]);
+  renderDoctorsList(docs);
+  renderPlacesList(places);
   renderAdsList(ads);
 }
-
-init();
 

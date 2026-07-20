@@ -1,23 +1,19 @@
 const STORAGE_KEY = 'qanater_listings';
 
 async function loadListings() {
-  // Try localStorage first (admin edits)
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) {
-    try { return JSON.parse(stored); } catch(e) {}
-  }
-  // Fallback to JSON file
-  try {
-    const res = await fetch('../data/listings.json?t=' + Date.now());
-    return await res.json();
-  } catch(e) { return { doctors: [], places: [] }; }
+  const [doctorsRes, placesRes] = await Promise.all([
+    supabaseClient.from('doctors').select('*'),
+    supabaseClient.from('places').select('*')
+  ]);
+  return {
+    doctors: doctorsRes.data || [],
+    places: placesRes.data || []
+  };
 }
 
 async function loadServices() {
-  try {
-    const res = await fetch('../data/services.json?t=' + Date.now());
-    return await res.json();
-  } catch(e) { return { services: [] }; }
+  const { data } = await supabaseClient.from('services').select('*');
+  return { services: data || [] };
 }
 
 function getParam(name) {

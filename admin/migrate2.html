@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>ترحيل البيانات إلى Supabase</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; padding: 20px; background: #f4f4f4; }
+    .card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
+    button { padding: 10px 20px; background: #007bff; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px; width: 100%; }
+    button:disabled { background: #ccc; }
+    #log { margin-top: 20px; background: #222; color: #0f0; padding: 10px; border-radius: 4px; height: 300px; overflow-y: auto; white-space: pre-wrap; font-family: monospace; direction: ltr; text-align: left; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+  <div class="card">
+    <h2>ترحيل البيانات (Migration) - النسخة 2</h2>
+    <p>سيتم قراءة البيانات من ملفات JSON المحلية ورفعها إلى جداول Supabase.</p>
+    <button id="startBtn">ابدأ الترحيل</button>
+    <div id="log"></div>
+  </div>
+
+  <script>
+    // تضمين إعدادات Supabase مباشرة لتفادي الكاش
+    const supabaseUrl = 'https://tqstwbydqaeazekebkor.supabase.co';
+    const supabaseKey = 'sb_publishable_Bm7jWPXPD1JHat75mbJVKA_mPr1A48A';
+    
+    // الانتظار حتى يتم تحميل مكتبة Supabase
+    document.getElementById('startBtn').addEventListener('click', async () => {
+      const elLog = document.getElementById('log');
+      function logMsg(msg) {
+        elLog.textContent += msg + '\n';
+        elLog.scrollTop = elLog.scrollHeight;
+      }
+      
+      document.getElementById('startBtn').disabled = true;
+      logMsg('Starting migration...');
+
+      try {
+        if (!window.supabase) {
+          throw new Error('Supabase library did not load properly from CDN. Please check your internet connection.');
+        }
+        
+        const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        logMsg('1. Loading local data...');
+        async function loadJSON(path) {
+          const res = await fetch(path + '?t=' + Date.now());
+          return res.json();
+        }
+
+        const servicesData = await loadJSON('../data/services.json');
+        const listingsData = await loadJSON('../data/listings.json');
+        let adsData = [];
+        try { adsData = (await loadJSON('../data/ads.json')).ads || []; } catch(e) {}
+        
+        logMsg('2. Migrating Services...');
+        if (servicesData.services) {
+          const { error } = await client.from('services').upsert(servicesData.services);
+          if (error) throw error;
+          logMsg('✅ Services migrated successfully.');
+        }
+
+        logMsg('3. Migrating Doctors...');
+        if (listingsData.doctors && listingsData.doctors.length > 0) {
+          const cleanDoctors = listingsData.doctors.map(d => ({
+            id: d.id, name: d.name, specialty: d.specialty, phones: d.phones, phone: d.phone,
+            whatsappIndex: d.whatsappIndex || 0, image: d.image, address: d.address,
+            location: d.location, facebook: d.facebook, schedule: d.schedule, fees: d.fees,
+            about: d.about, rating: d.rating, reviews: d.reviews, serviceId: d.serviceId
+          }));
+          const { error } = await client.from('doctors').upsert(cleanDoctors);
+          if (error) throw error;
+          logMsg(`✅ ${listingsData.doctors.length} Doctors migrated successfully.`);
+        }
+
+        logMsg('4. Migrating Places...');
+        if (listingsData.places && listingsData.places.length > 0) {
+          const cleanPlaces = listingsData.places.map(p => ({
+            id: p.id, name: p.name, serviceId: p.serviceId, subcategory: p.subcategory,
+            image: p.image, phone: p.phone, address: p.address, location: p.location,
+            facebook: p.facebook, workingHours: p.workingHours, about: p.about,
+            rating: p.rating, reviews: p.reviews
+          }));
+          const { error } = await client.from('places').upsert(cleanPlaces);
+          if (error) throw error;
+          logMsg(`✅ ${listingsData.places.length} Places migrated successfully.`);
+        }
+
+        logMsg('5. Migrating Ads...');
+        if (adsData.length > 0) {
+          const { error } = await client.from('ads').upsert(adsData);
+          if (error) throw error;
+          logMsg(`✅ ${adsData.length} Ads migrated successfully.`);
+        }
+
+        logMsg('\n🎉 All Data Migrated Successfully!');
+      } catch (err) {
+        logMsg('❌ ERROR: ' + err.message);
+        console.error(err);
+      }
+      document.getElementById('startBtn').disabled = false;
+    });
+  </script>
+</body>
+</html>
