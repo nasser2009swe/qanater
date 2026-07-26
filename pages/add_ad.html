@@ -142,9 +142,9 @@
 
       } catch (error) {
         console.error(error);
-        err.textContent = '❌ حدث خطأ داخلي، يرجى المحاولة لاحقاً';
+        err.textContent = '❌ حدث خطأ داخلي: ' + (error.message || 'يرجى المحاولة لاحقاً');
         err.style.display = 'block';
-        setTimeout(() => err.style.display = 'none', 4000);
+        setTimeout(() => err.style.display = 'none', 6000);
         btn.disabled = false;
         btn.textContent = '🚀 إرسال الإعلان للمراجعة';
       }

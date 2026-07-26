@@ -439,6 +439,10 @@ async function logout() {
 // ===== MARKETPLACE ADS =====
 async function getMarketplaceAds() {
   const { data, error } = await supabaseClient.from('marketplace_ads').select('*').order('created_at', { ascending: false });
+  if (error) {
+    console.error("Marketplace fetch error:", error);
+    alert('حدث خطأ أثناء جلب إعلانات السوق: ' + error.message);
+  }
   return error ? [] : (data || []);
 }
 
