@@ -523,10 +523,27 @@ function renderMarketplaceAds(ads) {
 
 // ===== INIT =====
 async function init() {
-  const [docs, places, ads, marketAds] = await Promise.all([getDoctors(), getPlaces(), getAds(), getMarketplaceAds()]);
-  renderDoctorsList(docs);
-  renderPlacesList(places);
-  renderAdsList(ads);
-  renderMarketplaceAds(marketAds);
+  try {
+    const docs = await getDoctors();
+    renderDoctorsList(docs);
+  } catch(e) { console.error("Error docs", e); }
+  
+  try {
+    const places = await getPlaces();
+    renderPlacesList(places);
+  } catch(e) { console.error("Error places", e); }
+  
+  try {
+    const ads = await getAds();
+    renderAdsList(ads);
+  } catch(e) { console.error("Error ads", e); }
+  
+  try {
+    const marketAds = await getMarketplaceAds();
+    renderMarketplaceAds(marketAds);
+  } catch(e) { 
+    console.error("Error marketAds", e); 
+    document.getElementById('pendingMarketplaceList').innerHTML = '<p style="color:red;text-align:center;">حدث خطأ برمجي: ' + e.message + '</p>';
+  }
 }
 
