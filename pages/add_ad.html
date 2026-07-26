@@ -147,28 +147,30 @@
 
       btn.disabled = true;
       btn.style.opacity = '0.7';
-      btn.textContent = '⏳ جاري رفع الملفات والإرسال... الرجاء الانتظار';
+      btn.textContent = '⏳ جاري الاتصال بالخادم...';
 
       try {
         // Upload Media
+        btn.textContent = '⏳ جاري رفع الصورة الرئيسية...';
         const mainImgUrl = await uploadFile(mainImgFile, 'images');
+        
         let videoUrl = null;
         if (videoFile) {
-          btn.textContent = '⏳ جاري رفع الفيديو (قد يستغرق بعض الوقت)...';
+          btn.textContent = '⏳ جاري رفع الفيديو (قد يستغرق وقتاً طويلاً)...';
           videoUrl = await uploadFile(videoFile, 'videos');
         }
         
         let extraImages = [];
         if (extraImgFiles.length > 0) {
-          btn.textContent = '⏳ جاري رفع الصور الإضافية...';
           for(let i=0; i<extraImgFiles.length; i++) {
+            btn.textContent = `⏳ جاري رفع الصورة الإضافية (${i+1}/${extraImgFiles.length})...`;
             let url = await uploadFile(extraImgFiles[i], 'images');
             if(url) extraImages.push(url);
           }
         }
 
         // Save to Database
-        btn.textContent = '⏳ جاري الحفظ في قاعدة البيانات...';
+        btn.textContent = '⏳ جاري حفظ بيانات الإعلان...';
         const adData = {
           title: title,
           description: desc,
@@ -192,9 +194,9 @@
 
       } catch (error) {
         console.error(error);
-        err.textContent = '❌ حدث خطأ أثناء الرفع: ' + (error.message || 'تأكد من الاتصال بالإنترنت');
+        err.textContent = '❌ خطأ: ' + (error.message || 'حدثت مشكلة غير معروفة');
         err.style.display = 'block';
-        setTimeout(() => err.style.display = 'none', 6000);
+        setTimeout(() => err.style.display = 'none', 8000);
         btn.disabled = false;
         btn.style.opacity = '1';
         btn.textContent = '🚀 إرسال الإعلان ورفع الملفات';
