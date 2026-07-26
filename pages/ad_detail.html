@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>تفاصيل الإعلان - سوق القناطر</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-content">
+      <div class="header-top">
+        <a href="marketplace.html" class="back-btn">➔ رجوع للسوق</a>
+        <div class="header-title">
+          <h1>تفاصيل الإعلان</h1>
+        </div>
+        <div class="header-icon">🛍️</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="detail-main" id="adDetailMain" style="display:none;">
+    
+    <!-- Title & Price -->
+    <div class="profile-card">
+      <h2 id="detailTitle" style="font-size: 1.3rem; margin-bottom: 8px;"></h2>
+      <div id="detailPrice" style="color: #E67E22; font-size: 1.4rem; font-weight: 900; margin-bottom: 10px;"></div>
+      <div style="color: var(--text-mid); font-size: 0.9rem;">بواسطة: <strong id="detailAdvertiser" style="color: var(--text-dark);"></strong></div>
+    </div>
+
+    <!-- Media (Images Slider) -->
+    <div id="mediaGallery" style="background: var(--card-bg); padding: 15px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 14px;">
+      <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--text-dark);">📸 صور المنتج</h3>
+      <div id="imagesContainer" style="display: flex; overflow-x: auto; gap: 10px; scroll-snap-type: x mandatory; padding-bottom: 10px;">
+        <!-- Images injected here -->
+      </div>
+    </div>
+
+    <!-- Video (If exists) -->
+    <div id="videoContainer" style="display:none; background: var(--card-bg); padding: 15px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 14px;">
+      <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--text-dark);">🎥 فيديو المنتج</h3>
+      <video id="detailVideo" controls style="width: 100%; border-radius: 12px; background: #000;"></video>
+    </div>
+
+    <!-- Description -->
+    <div class="info-cards">
+      <div class="info-card" style="flex-direction: column;">
+        <div class="info-label" style="font-size: 0.9rem; margin-bottom: 8px; color: var(--primary);">📝 الوصف والتفاصيل</div>
+        <div class="info-value" id="detailDesc" style="font-weight: normal; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6;"></div>
+      </div>
+    </div>
+
+    <!-- Contact Buttons -->
+    <div class="action-buttons" style="margin-top: 20px;">
+      <a href="#" id="btnCall" class="action-btn btn-call" style="font-size: 1rem;">📞 اتصال</a>
+      <a href="#" id="btnWhatsapp" class="action-btn btn-whatsapp" target="_blank" style="font-size: 1rem;">💬 واتساب</a>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section" style="margin-top: 30px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 20px;">
+      <h3 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--text-dark);">⭐ آراء وتقييمات العملاء</h3>
+      
+      <!-- Existing Reviews -->
+      <div id="reviewsList" class="reviews-list" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px;">
+        <p style="color: var(--text-light); font-size: 0.9rem;">جاري تحميل التعليقات...</p>
+      </div>
+
+      <!-- Add Review Form -->
+      <div id="addReviewBox" style="background: var(--card-bg); box-shadow: var(--shadow); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+        <h4 style="margin-bottom: 10px; font-size: 1rem; color: var(--text-dark);">أضف تقييمك للمنتج</h4>
+        <div class="alert alert-success" id="reviewSuccess" style="display:none; padding: 10px; margin-bottom: 10px; font-size: 0.85rem;">✅ تم إضافة التقييم بنجاح</div>
+        <div class="alert alert-error" id="reviewError" style="display:none; padding: 10px; margin-bottom: 10px; font-size: 0.85rem;">❌ يرجى اختيار التقييم بالنجوم</div>
+        
+        <div style="margin-bottom: 10px;">
+          <input type="text" id="reviewName" placeholder="الاسم (اختياري، أو سيظهر كـ زائر)" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: var(--bg); color: var(--text-dark); font-family: 'Cairo', sans-serif; font-size: 0.9rem; outline: none;" />
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+          <div class="star-rating-input" id="starRatingInput" style="display: flex; gap: 5px; font-size: 1.8rem; color: #ccc; cursor: pointer; justify-content: center; margin-bottom: 10px;">
+            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+          </div>
+          <input type="hidden" id="reviewRatingVal" value="0" />
+        </div>
+
+        <div style="margin-bottom: 10px;">
+          <textarea id="reviewComment" placeholder="اكتب تعليقك ورأيك في المنتج هنا..." rows="3" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: var(--bg); color: var(--text-dark); font-family: 'Cairo', sans-serif; font-size: 0.9rem; outline: none; resize: vertical;"></textarea>
+        </div>
+        
+        <button id="submitReviewBtn" onclick="submitAdReview()" style="width: 100%; padding: 12px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 0.95rem; cursor: pointer;">نشر التقييم</button>
+      </div>
+      
+      <!-- Already Reviewed State -->
+      <div id="alreadyReviewedBox" style="display: none; background: rgba(39, 174, 96, 0.1); border: 1px solid rgba(39, 174, 96, 0.3); padding: 15px; border-radius: 12px; text-align: center;">
+        <p style="color: #27ae60; margin: 0; font-weight: bold;">شكراً لك! لقد قمت بتقييم هذا الإعلان مسبقاً.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="loadingState" style="text-align: center; padding: 50px; color: var(--text-light);">
+    <h2>جاري التحميل...</h2>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/ad_detail.js"></script>
+
+</body>
+</html>
