@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>خدمات مجتمعية - القناطر الخيرية</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    /* Add slight scale effect */
+    .extra-card {
+      transition: var(--transition);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 16px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .extra-card:active {
+      transform: scale(0.96);
+    }
+  </style>
+</head>
+<body>
+  
+  <header class="header">
+    <div class="header-content">
+      <div class="header-top">
+        <a href="../index.html" class="back-btn">➔ رجوع</a>
+        <div class="header-title">
+          <h1>خدمات مجتمعية</h1>
+          <p>خدمات تهم كل أهل القناطر</p>
+        </div>
+        <div class="header-icon">🤝</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content" style="padding-bottom: 40px;">
+    
+    <div class="section-title">
+      <span class="section-dot"></span>
+      <h2>اختر الخدمة</h2>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+      
+      <!-- Blood Bank -->
+      <a href="#" class="extra-card" style="background: linear-gradient(135deg, rgba(231,76,60,0.08), rgba(231,76,60,0.02)); border: 1px solid rgba(231,76,60,0.15);">
+        <div style="font-size: 2.4rem;">🩸</div>
+        <div>
+          <h3 style="font-size: 1.05rem; color: #c0392b; font-weight: 800; margin-bottom: 3px;">بنك الدم المحلي (قريباً)</h3>
+          <p style="font-size: 0.8rem; color: var(--text-mid); line-height: 1.4;">سجل فصيلتك أو ابحث عن متبرعين للحالات الطارئة.</p>
+        </div>
+      </a>
+
+      <!-- Emergency -->
+      <a href="#" class="extra-card" style="background: linear-gradient(135deg, rgba(243,156,18,0.08), rgba(243,156,18,0.02)); border: 1px solid rgba(243,156,18,0.15);">
+        <div style="font-size: 2.4rem;">🚨</div>
+        <div>
+          <h3 style="font-size: 1.05rem; color: #d35400; font-weight: 800; margin-bottom: 3px;">أرقام الطوارئ (قريباً)</h3>
+          <p style="font-size: 0.8rem; color: var(--text-mid); line-height: 1.4;">الإسعاف، المطافئ، طوارئ المياه والكهرباء بضغطة زر.</p>
+        </div>
+      </a>
+
+      <!-- Weather & Prayer -->
+      <a href="#" class="extra-card" style="background: linear-gradient(135deg, rgba(41,128,185,0.08), rgba(41,128,185,0.02)); border: 1px solid rgba(41,128,185,0.15);">
+        <div style="font-size: 2.4rem;">🌙</div>
+        <div>
+          <h3 style="font-size: 1.05rem; color: #2980b9; font-weight: 800; margin-bottom: 3px;">مواقيت الصلاة والطقس (قريباً)</h3>
+          <p style="font-size: 0.8rem; color: var(--text-mid); line-height: 1.4;">تعرف على حالة الجو اليوم والمواعيد الدقيقة للصلاة.</p>
+        </div>
+      </a>
+
+      <!-- Lost and Found -->
+      <a href="#" class="extra-card" style="background: linear-gradient(135deg, rgba(142,68,173,0.08), rgba(142,68,173,0.02)); border: 1px solid rgba(142,68,173,0.15);">
+        <div style="font-size: 2.4rem;">🔍</div>
+        <div>
+          <h3 style="font-size: 1.05rem; color: #8e44ad; font-weight: 800; margin-bottom: 3px;">المفقودات (قريباً)</h3>
+          <p style="font-size: 0.8rem; color: var(--text-mid); line-height: 1.4;">هل فقدت شيئاً؟ انشر هنا ليساعدك أهل القناطر.</p>
+        </div>
+      </a>
+
+      <!-- 24/7 Pharmacies -->
+      <a href="service.html?id=pharmacies" class="extra-card" style="background: linear-gradient(135deg, rgba(39,174,96,0.08), rgba(39,174,96,0.02)); border: 1px solid rgba(39,174,96,0.15);">
+        <div style="font-size: 2.4rem;">🏪</div>
+        <div>
+          <h3 style="font-size: 1.05rem; color: #27ae60; font-weight: 800; margin-bottom: 3px;">صيدليات 24 ساعة</h3>
+          <p style="font-size: 0.8rem; color: var(--text-mid); line-height: 1.4;">اكتشف الصيدليات والخدمات التي تعمل طوال الليل.</p>
+        </div>
+      </a>
+
+    </div>
+
+  </main>
+</body>
+</html>
