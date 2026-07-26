@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qanater-v1';
+const CACHE_NAME = 'qanater-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -8,10 +8,18 @@ const ASSETS_TO_CACHE = [
   './js/ui.js',
   './js/service.js',
   './js/detail.js',
+  './js/marketplace.js',
+  './js/ad_detail.js',
   './js/supabase-config.js',
   './manifest.json',
   './pages/service.html',
-  './pages/detail.html'
+  './pages/detail.html',
+  './pages/extra.html',
+  './pages/marketplace.html',
+  './pages/add_ad.html',
+  './pages/ad_detail.html',
+  './admin/dashboard.html',
+  './admin/login.html'
 ];
 
 self.addEventListener('install', event => {
@@ -35,21 +43,32 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // If request is for Supabase API, let it pass through network directly
-  if (event.request.url.includes('supabase.co')) {
+  // Only handle GET requests
+  if (event.request.method !== 'GET') return;
+  
+  // Pass through Supabase and Chrome Extensions
+  if (event.request.url.includes('supabase.co') || event.request.url.startsWith('chrome-extension')) {
     return;
   }
-    event.respondWith(
-      caches.match(event.request).then(response => {
-        return response || fetch(event.request).then(fetchRes => {
-          return caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, fetchRes.clone());
-            return fetchRes;
+
+  // Stale-While-Revalidate Strategy
+  event.respondWith(
+    caches.match(event.request).then(cachedResponse => {
+      
+      const fetchPromise = fetch(event.request).then(networkResponse => {
+        // Cache valid responses
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, networkResponse.clone());
           });
-        });
-      }).catch(() => {
-        // Fallback for offline if needed
-        return new Response('Offline Content Not Available');
-      })
-    );
+        }
+        return networkResponse;
+      }).catch(err => {
+        console.warn('Network fetch failed for', event.request.url, err);
+      });
+
+      // Return cache instantly if available, otherwise wait for network
+      return cachedResponse || fetchPromise;
+    })
+  );
 });
