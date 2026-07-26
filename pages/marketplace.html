@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <title>سوق القناطر - إعلانات وفيديوهات</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  
+  <style>
+    body, html { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
+    
+    /* Header over video */
+    .market-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: env(safe-area-inset-top, 20px) 20px 15px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+      color: #fff;
+    }
+    
+    .market-header h1 { font-size: 1.2rem; font-weight: 800; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    .back-icon { font-size: 1.5rem; color: #fff; text-decoration: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+    /* Feed Container (TikTok Style Scroll) */
+    .feed-container {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scrollbar-width: none; /* Firefox */
+    }
+    .feed-container::-webkit-scrollbar { display: none; } /* Chrome */
+
+    /* Individual Feed Item */
+    .feed-item {
+      height: 100vh;
+      width: 100vw;
+      scroll-snap-align: start;
+      position: relative;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .feed-media {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Right Side Action Buttons */
+    .action-sidebar {
+      position: absolute;
+      right: 15px;
+      bottom: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      z-index: 10;
+    }
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #fff;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+      text-decoration: none;
+    }
+    .action-icon {
+      font-size: 2.2rem;
+      background: rgba(0,0,0,0.3);
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(5px);
+      margin-bottom: 5px;
+      transition: 0.2s;
+    }
+    .action-btn:active .action-icon { transform: scale(0.85); }
+    .action-text { font-size: 0.8rem; font-weight: 700; }
+
+    /* Bottom Info */
+    .feed-info {
+      position: absolute;
+      left: 15px;
+      right: 80px;
+      bottom: 30px;
+      color: #fff;
+      z-index: 10;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    }
+    .feed-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 5px; line-height: 1.4; }
+    .feed-price { font-size: 1.2rem; font-weight: 900; color: #F1C40F; margin-bottom: 5px; }
+    .feed-advertiser { font-size: 0.9rem; opacity: 0.9; display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
+    
+    .view-details-btn {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.5);
+      color: #fff; padding: 6px 14px;
+      border-radius: 20px; font-size: 0.8rem;
+      font-weight: 700; text-decoration: none;
+      backdrop-filter: blur(5px);
+      display: inline-block;
+    }
+
+    /* Floating Add Ad Button */
+    .add-ad-btn {
+      position: fixed;
+      left: 20px;
+      top: env(safe-area-inset-top, 20px);
+      background: linear-gradient(135deg, #E67E22, #F39C12);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 15px rgba(230,126,34,0.4);
+      z-index: 101;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Loader */
+    .loader {
+      color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      font-size: 1.2rem; font-weight: bold;
+    }
+    
+    /* Play icon overlay for paused videos */
+    .play-overlay {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4rem;
+      color: rgba(255,255,255,0.6);
+      pointer-events: none;
+      opacity: 0;
+      transition: 0.2s;
+    }
+    .is-paused .play-overlay { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <header class="market-header">
+    <a href="../index.html" class="back-icon">➔</a>
+    <h1>سوق القناطر</h1>
+  </header>
+
+  <a href="add_ad.html" class="add-ad-btn">➕ أضف إعلانك</a>
+
+  <div class="feed-container" id="feedContainer">
+    <div class="loader" id="marketLoader">جاري تحميل الإعلانات...</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/marketplace.js"></script>
+
+</body>
+</html>
