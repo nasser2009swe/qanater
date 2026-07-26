@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qanater-v0';
+const CACHE_NAME = 'qanater-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
