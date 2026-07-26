@@ -21,6 +21,7 @@
       <button class="admin-tab active" onclick="switchTab('doctors', this)">👨‍⚕️ الأطباء</button>
       <button class="admin-tab" onclick="switchTab('places', this)">🏪 الأماكن</button>
       <button class="admin-tab" onclick="switchTab('ads', this)">📢 الإعلانات</button>
+      <button class="admin-tab" onclick="switchTab('marketplace', this)">🛍️ السوق (مراجعة)</button>
     </div>
 
     <!-- DOCTORS PANEL -->
@@ -245,6 +246,25 @@
           <span id="adCount" style="color:rgba(255,255,255,0.5);font-size:0.8rem;"></span>
         </div>
         <div id="adsList"></div>
+    <!-- MARKETPLACE PANEL (PENDING & APPROVED) -->
+    <div class="admin-panel" id="panel-marketplace">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <span class="admin-card-title">🛍️ إعلانات السوق المعلقة </span>
+          <span id="pendingAdsCount" style="background:#E67E22; color:#fff; border-radius:50%; padding:2px 8px; font-size:0.8rem;">0</span>
+        </div>
+        <div id="pendingMarketplaceList">
+          <p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px;">جاري التحميل...</p>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <span class="admin-card-title">✅ الإعلانات المقبولة (النشطة)</span>
+        </div>
+        <div id="approvedMarketplaceList">
+          <p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px;">جاري التحميل...</p>
+        </div>
       </div>
     </div>
 

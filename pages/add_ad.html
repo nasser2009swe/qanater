@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>أضف إعلانك - سوق القناطر</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+</head>
+<body class="admin-body"> <!-- Using admin-body class for a dark premium look for forms -->
+
+  <header class="admin-header">
+    <a href="marketplace.html" style="color: #fff; text-decoration: none; font-size: 1.5rem; font-weight: bold;">➔</a>
+    <h1>أضف إعلانك في السوق</h1>
+    <div style="width:24px;"></div>
+  </header>
+
+  <main class="admin-main">
+    
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <span class="admin-card-title">🛍️ تفاصيل الإعلان</span>
+      </div>
+      
+      <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 20px;">املأ البيانات التالية لعرض منتجك في سوق القناطر (واجهة التيك توك). سيتم مراجعة إعلانك من قبل الإدارة قبل النشر.</p>
+
+      <div class="alert alert-success" id="adSuccess">✅ تم إرسال إعلانك بنجاح! سيتم مراجعته قريباً.</div>
+      <div class="alert alert-error" id="adError">❌ تأكد من ملء الحقول الأساسية (الاسم، العنوان، الهاتف).</div>
+
+      <div class="form-group">
+        <label class="form-label">اسم المنتج أو الإعلان *</label>
+        <input type="text" id="adTitle" class="form-input" placeholder="مثال: آيفون 13 برو ماكس بحالة الزيرو"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">الوصف التفصيلي</label>
+        <textarea id="adDesc" class="form-textarea" placeholder="اكتب كل تفاصيل ومميزات المنتج..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">السعر (بالجنيه المصري)</label>
+        <input type="number" id="adPrice" class="form-input" placeholder="مثال: 25000"/>
+      </div>
+
+      <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 20px 0;"></div>
+      
+      <div class="admin-card-header"><span class="admin-card-title">👤 بيانات المعلن</span></div>
+
+      <div class="form-group">
+        <label class="form-label">اسم المعلن / المحل *</label>
+        <input type="text" id="adAdvertiser" class="form-input" placeholder="مثال: محمد أحمد أو محل قناطر فون"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">رقم الهاتف (للتواصل وواتساب) *</label>
+        <input type="tel" id="adPhone" class="form-input" placeholder="مثال: 01000000000" dir="ltr" style="text-align: right;"/>
+      </div>
+
+      <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 20px 0;"></div>
+
+      <div class="admin-card-header"><span class="admin-card-title">📸 الوسائط (صور وفيديو)</span></div>
+      <p style="color: rgba(255,255,255,0.6); font-size: 0.75rem; margin-bottom: 15px;">حالياً نرجو رفع الصور على موقع خارجي (مثل imgur) ووضع الرابط هنا، أو رابط فيديو (مثل رابط يوتيوب/تيك توك مباشر).</p>
+
+      <div class="form-group">
+        <label class="form-label">رابط الصورة الرئيسية *</label>
+        <input type="url" id="adMainImage" class="form-input" placeholder="https://..."/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">رابط فيديو للمنتج (مهم جداً لواجهة التيك توك)</label>
+        <input type="url" id="adVideo" class="form-input" placeholder="https://..."/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">رابط صورة إضافية 1 (اختياري)</label>
+        <input type="url" id="adImg1" class="form-input" placeholder="https://..."/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">رابط صورة إضافية 2 (اختياري)</label>
+        <input type="url" id="adImg2" class="form-input" placeholder="https://..."/>
+      </div>
+
+      <button id="submitBtn" class="btn-primary" onclick="submitMarketplaceAd()" style="margin-top: 15px;">🚀 إرسال الإعلان للمراجعة</button>
+    
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/supabase-config.js"></script>
+  
+  <script>
+    async function submitMarketplaceAd() {
+      const title = document.getElementById('adTitle').value.trim();
+      const desc = document.getElementById('adDesc').value.trim();
+      const price = parseFloat(document.getElementById('adPrice').value) || 0;
+      const advertiser = document.getElementById('adAdvertiser').value.trim();
+      const phone = document.getElementById('adPhone').value.trim();
+      const mainImg = document.getElementById('adMainImage').value.trim();
+      const video = document.getElementById('adVideo').value.trim();
+      const img1 = document.getElementById('adImg1').value.trim();
+      const img2 = document.getElementById('adImg2').value.trim();
+
+      const err = document.getElementById('adError');
+      const succ = document.getElementById('adSuccess');
+      const btn = document.getElementById('submitBtn');
+
+      if (!title || !advertiser || !phone) {
+        err.style.display = 'block';
+        setTimeout(() => err.style.display = 'none', 4000);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'جاري الإرسال...';
+
+      // Assemble additional images
+      const extraImages = [];
+      if(img1) extraImages.push(img1);
+      if(img2) extraImages.push(img2);
+
+      const adData = {
+        title: title,
+        description: desc,
+        price: price,
+        advertiser_name: advertiser,
+        advertiser_phone: phone,
+        main_image: mainImg,
+        video_url: video,
+        images_json: extraImages,
+        status: 'pending'
+      };
+
+      try {
+        const { error } = await supabaseClient.from('marketplace_ads').insert([adData]);
+        if (error) throw error;
+        
+        succ.style.display = 'block';
+        setTimeout(() => {
+          window.location.href = 'marketplace.html';
+        }, 2000);
+
+      } catch (error) {
+        console.error(error);
+        err.textContent = '❌ حدث خطأ داخلي، يرجى المحاولة لاحقاً';
+        err.style.display = 'block';
+        setTimeout(() => err.style.display = 'none', 4000);
+        btn.disabled = false;
+        btn.textContent = '🚀 إرسال الإعلان للمراجعة';
+      }
+    }
+  </script>
+
+</body>
+</html>

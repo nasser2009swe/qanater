@@ -436,11 +436,93 @@ async function logout() {
   window.location.href = 'login.html';
 }
 
+// ===== MARKETPLACE ADS =====
+async function getMarketplaceAds() {
+  const { data, error } = await supabaseClient.from('marketplace_ads').select('*').order('created_at', { ascending: false });
+  return error ? [] : (data || []);
+}
+
+async function approveMarketAd(id) {
+  if(!confirm('هل أنت متأكد من الموافقة على نشر هذا الإعلان؟')) return;
+  await supabaseClient.from('marketplace_ads').update({ status: 'approved' }).eq('id', id);
+  await refreshMarketplaceAds();
+}
+
+async function rejectMarketAd(id) {
+  if(!confirm('هل أنت متأكد من رفض هذا الإعلان؟')) return;
+  await supabaseClient.from('marketplace_ads').update({ status: 'rejected' }).eq('id', id);
+  await refreshMarketplaceAds();
+}
+
+async function deleteMarketAd(id) {
+  if(!confirm('هل أنت متأكد من حذف هذا الإعلان نهائياً؟')) return;
+  await supabaseClient.from('marketplace_ads').delete().eq('id', id);
+  await refreshMarketplaceAds();
+}
+
+async function refreshMarketplaceAds() {
+  const ads = await getMarketplaceAds();
+  renderMarketplaceAds(ads);
+}
+
+function renderMarketplaceAds(ads) {
+  const pendingList = document.getElementById('pendingMarketplaceList');
+  const approvedList = document.getElementById('approvedMarketplaceList');
+  
+  const pending = ads.filter(a => a.status === 'pending');
+  const approved = ads.filter(a => a.status === 'approved');
+  const rejected = ads.filter(a => a.status === 'rejected');
+
+  document.getElementById('pendingAdsCount').textContent = pending.length;
+
+  if (pending.length === 0) {
+    pendingList.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px;">لا توجد إعلانات معلقة</p>';
+  } else {
+    pendingList.innerHTML = pending.map(a => `
+      <div class="listing-item" style="border-left: 4px solid #E67E22; flex-direction:column; align-items:flex-start;">
+        <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:10px;">
+          <div class="listing-item-info">
+            <div class="listing-item-name">${a.title}</div>
+            <div class="listing-item-sub">بواسطة: ${a.advertiser_name} | هاتف: ${a.advertiser_phone}</div>
+            <div class="listing-item-sub" style="color:#F1C40F;">السعر: ${a.price || 0} ج.م</div>
+          </div>
+        </div>
+        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-bottom: 10px;">
+           ${a.description ? a.description.substring(0, 60) + '...' : 'لا يوجد وصف'}
+        </div>
+        <div style="display:flex; gap:10px; width:100%;">
+          <button onclick="approveMarketAd('${a.id}')" style="flex:1; background:#27AE60; color:#fff; border:none; padding:8px; border-radius:8px; cursor:pointer;">موافقة ✅</button>
+          <button onclick="rejectMarketAd('${a.id}')" style="flex:1; background:#E74C3C; color:#fff; border:none; padding:8px; border-radius:8px; cursor:pointer;">رفض ❌</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Approved + Rejected List
+  const others = [...approved, ...rejected];
+  if (others.length === 0) {
+    approvedList.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px;">لا توجد إعلانات نشطة</p>';
+  } else {
+    approvedList.innerHTML = others.map(a => `
+      <div class="listing-item" style="border-left: 4px solid ${a.status === 'approved' ? '#27AE60' : '#E74C3C'};">
+        <div class="listing-item-info">
+          <div class="listing-item-name">${a.title}</div>
+          <div class="listing-item-sub">الحالة: ${a.status === 'approved' ? 'مقبول ✅' : 'مرفوض ❌'} | بواسطة: ${a.advertiser_name}</div>
+        </div>
+        <div class="listing-item-actions">
+          <button class="btn-danger" onclick="deleteMarketAd('${a.id}')">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
 // ===== INIT =====
 async function init() {
-  const [docs, places, ads] = await Promise.all([getDoctors(), getPlaces(), getAds()]);
+  const [docs, places, ads, marketAds] = await Promise.all([getDoctors(), getPlaces(), getAds(), getMarketplaceAds()]);
   renderDoctorsList(docs);
   renderPlacesList(places);
   renderAdsList(ads);
+  renderMarketplaceAds(marketAds);
 }
 
